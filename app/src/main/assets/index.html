@@ -59,6 +59,14 @@ button.x:hover{color:var(--bad)}
 .bom tr.noprice td.p input{border-color:var(--warn);background:var(--warnbg)}
 .bom tr.grp td{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;padding-top:12px;border-bottom:none}
 .bom .tag{font-size:10.5px;color:var(--acc);background:var(--acc2);border-radius:4px;padding:1px 5px;margin-left:4px;white-space:nowrap}
+.bom td.nm select{width:100%}
+.nmwrap{display:flex;gap:4px;align-items:center}
+.nmwrap button{padding:4px 8px;font-size:13px;white-space:nowrap}
+.rec{font-size:11.5px;color:var(--warn);margin-top:2px}
+.rec.ok{color:var(--muted)}
+select.chosen{border-color:var(--acc)}
+.full{display:none}
+@media (max-width:640px){.full{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.3}}
 .totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
 .totals div{background:var(--bg);border-radius:9px;padding:9px 11px;font-size:12px;color:var(--muted)}
 .totals b{display:block;font-size:18px;color:var(--ink);margin-top:2px}
@@ -165,6 +173,7 @@ button.x:hover{color:var(--bad)}
   <div class="card">
     <h2><span class="num">2</span>Інвертор</h2>
     <div class="grid">
+      <label style="grid-column:1/-1">Модель інвертора<select id="invModel"><option value="auto">Авто</option></select></label>
       <label>Тип<select id="invKind"><option value="hybrid">Гібридний (мережа + АКБ + сонце)</option><option value="ups">Інвертор/ДБЖ із зарядкою (без сонця)</option></select></label>
       <label>Схема<select id="invType"><option value="hf">Високочастотний (пуск ×2)</option><option value="lf">Низькочастотний, трансформаторний (пуск ×3)</option></select></label>
       <label>Напруга системи (АКБ)<select id="sysV"><option value="auto">Авто</option><option value="12">12 В</option><option value="24">24 В</option><option value="48">48 В</option></select></label>
@@ -186,6 +195,7 @@ button.x:hover{color:var(--bad)}
           <option value="custom">Свій елемент</option>
         </select>
       </label>
+      <label>Модель елемента<select id="cellModel"></select></label>
       <label>Номінальна напруга елемента, В<input id="cellV" type="number" inputmode="decimal" step="0.01"></label>
       <label>Ємність елемента, А·год<input id="cellAh" type="number" inputmode="decimal" step="0.1"></label>
       <label>Макс. тривалий струм елемента, А<input id="cellI" type="number" inputmode="decimal" step="0.1"></label>
@@ -207,6 +217,8 @@ button.x:hover{color:var(--bad)}
       <label>Світло між відключеннями, год<input id="gridH" type="number" inputmode="decimal" min="0" step="0.5" value="4"></label>
       <label>Струм заряду, А (порожньо = авто)<input id="chgA" type="number" inputmode="numeric" min="0" placeholder="авто"></label>
       <label>Довжина кабелю АКБ–інвертор (в один бік), м<input id="cableL" type="number" inputmode="decimal" min="0.2" step="0.1" value="1.5"></label>
+      <label>Переріз кабелю<select id="cabSize"><option value="auto">Авто</option></select></label>
+      <label>Номінал запобіжника<select id="fuseSel"><option value="auto">Авто</option></select></label>
     </div>
   </div>
 </div>
@@ -241,7 +253,7 @@ button.x:hover{color:var(--bad)}
 <div class="wide">
   <div class="card" id="bomCard">
     <h2><span class="num">5</span>Що купити — кошторис</h2>
-    <p class="hint" style="margin:0 0 6px">Кількості рахуються самі. Впишіть свою ціну за одиницю в кожен рядок. Назву й кількість можна змінити, непотрібне — зняти галочкою.</p>
+    <p class="hint" style="margin:0 0 6px">Кожну позицію виберіть зі списку (моделі, типи, варіанти) або «✏️ Свій варіант» — він запам'ятається. Кількості рахуються самі. Ціна запам'ятовується окремо для кожного компонента: обрали модель — підставилась ваша ціна.</p>
     <div class="tablewrap">
     <table class="bom">
       <thead><tr><th></th><th>Найменування</th><th>К-сть</th><th>Од.</th><th>Ціна за од., грн</th><th class="r">Сума, грн</th><th></th></tr></thead>
@@ -253,7 +265,7 @@ button.x:hover{color:var(--bad)}
       <button id="addItem">+ Своя позиція</button>
       <button id="addSvc">+ Своя робота/послуга</button>
       <button id="fillEst">Підставити орієнтовні ціни в порожні</button>
-      <button id="resetBom">Скинути назви й кількості</button>
+      <button id="resetBom">Скинути вибір і кількості</button>
     </div>
     <div class="grid" style="margin-top:12px">
       <label>Націнка на матеріали для клієнта, %<input id="markup" type="number" inputmode="numeric" min="0" value="0"></label>
@@ -323,7 +335,7 @@ const DEFAULT_ROWS=[0,1,2,7,9,5].map(i=>{const d=DEVICES[i];return{name:d[0],p:d
 const CHEM={
  lfp:{label:'LiFePO4',v:3.2,vmin:2.8,vlow:3.0,vmax:3.6,ah:280,i:140,dod:90,price:3500,whkg:160,vars:[105,206,230,280,304,314],k:1.05,cr:[0.2,0.5],cycles:'3000–6000',bms:true,unit:'комірка',
       name:a=>`Комірка LiFePO4 3.2 В ${a} А·год (Grade A)`,note:'LiFePO4: 3000–6000 циклів, безпечна хімія. Струм — беріть ~0.5C тривало (для 280 А·год ≈ 140 А). Не заряджати нижче 0 °C. Комірки однієї партії, пакет стягувати.'},
- nmc:{label:'Li-ion NMC',v:3.6,vmin:3.0,vlow:3.3,vmax:4.15,ah:3.0,i:10,dod:80,price:130,whkg:190,vars:[2.5,3.0,3.5,4.0,5.0],k:1.05,cr:[0.2,0.5],cycles:'500–1000',bms:true,unit:'банка',
+ nmc:{label:'Li-ion NMC',v:3.6,vmin:3.0,vlow:3.3,vmax:4.15,ah:3.4,i:8,dod:80,price:130,whkg:190,vars:[2.5,3.0,3.5,4.0,5.0],k:1.05,cr:[0.2,0.5],cycles:'500–1000',bms:true,unit:'банка',
       name:a=>`Банка Li-ion 18650/21700 ${a} А·год`,note:'Li-ion NMC: компактно, але 500–1000 циклів і вища пожежонебезпечність. Банки в паралельних групах однакові, точкове зварювання, обов’язкова BMS.'},
  agm:{label:'AGM',v:12,vmin:10.8,vlow:11.5,vmax:14.4,ah:100,i:25,dod:50,price:6500,whkg:33,vars:[65,100,150,200],k:1.3,cr:[0.1,0.2],cycles:'300–600',bms:false,unit:'АКБ',
       name:a=>`Акумулятор AGM 12 В ${a} А·год`,note:'AGM: дешево на старті, але розряджати не глибше 50%, струм до 0.2C, 300–600 циклів. АКБ у збірці однакові, однієї дати.'},
@@ -339,20 +351,83 @@ const FUSE=[40,50,60,80,100,125,150,175,200,225,250,300,350,400,500,600];
 const CABLE=[[6,40],[10,60],[16,80],[25,110],[35,140],[50,175],[70,220],[95,270],[120,320],[150,370],[185,420],[240,500]];
 const WIN={12:[10,15.5],24:[20,31],48:[40,60]};
 
+/* ---------- каталоги ---------- */
+const CELLS={
+  lfp:[['EVE LF105',105],['EVE LF230',230],['EVE LF280K',280],['EVE MB31',314],['CATL',280],['Hithium',280],['Hithium',314],['REPT CB71',280],['Lishen',272]]
+      .map(([n,ah])=>({id:`${n} ${ah}`,n,ah,i:Math.round(ah*0.5)})),
+  nmc:[['Samsung 35E (18650)',3.4,8],['LG MJ1 (18650)',3.5,10],['Samsung 30Q (18650)',3.0,15],['Molicel P28A (18650)',2.8,25],
+       ['Samsung 50E (21700)',4.9,9.8],['Molicel P42A (21700)',4.2,45],['LG M50LT (21700)',5.0,7.3],['18650 б/в з ноутбуків',2.0,4]]
+      .map(([n,ah,i])=>({id:n,n,ah,i})),
+  agm:[65,100,120,150,200].map(a=>({id:`AGM ${a}`,n:'AGM 12 В',ah:a,i:Math.round(a*0.25)})),
+  gel:[65,100,120,150,200].map(a=>({id:`GEL ${a}`,n:'GEL 12 В',ah:a,i:Math.round(a*0.25)})),
+  custom:[]
+};
+const CELL_DEF={lfp:'EVE LF280K 280',nmc:'Samsung 35E (18650)',agm:'AGM 100',gel:'GEL 100'};
+const cellLabel=(m,ch)=>ch==='lfp'?`${m.n} — ${m.ah} А·год`:ch==='nmc'?`${m.n} — ${m.ah} А·год, до ${m.i} А`:`${m.n} ${m.ah} А·год`;
+const cellBomName=(m,ch)=>ch==='lfp'?`Комірка LiFePO4 ${m.n} 3.2 В ${m.ah} А·год (Grade A)`:ch==='nmc'?`Банка Li-ion ${m.n} ${m.ah} А·год`:`Акумулятор ${m.n} ${m.ah} А·год`;
+
+const INVM=[
+  ['LogicPower LPY-W-PSW-800VA+',560,12,1,0],['LogicPower LPY-W-PSW-1000VA+',700,12,1,0],['LogicPower LPY-W-PSW-1500VA+',1050,24,1,0],
+  ['LogicPower LPY-W-PSW-2000VA+',1400,24,1,0],['Victron MultiPlus 12/1600/70-16',1300,12,1,0],['Victron MultiPlus 24/3000/70-16',2400,24,1,0],
+  ['Victron MultiPlus-II 48/3000/35-32',2400,48,1,0],['Must PV18-3224 PRO',3200,24,0,1],['Growatt SPF 3500 ES',3500,48,0,1],
+  ['Deye SUN-3.6K-SG03LP1-EU',3600,48,0,1],['Victron MultiPlus-II 48/5000/70-50',4000,48,1,0],['Growatt SPF 5000 ES',5000,48,0,1],
+  ['Deye SUN-5K-SG05LP1-EU',5000,48,0,1],['Luxpower SNA5000 WPV',5000,48,0,1],['Must PV18-5248 PRO',5200,48,0,1],
+  ['Deye SUN-6K-SG05LP1-EU',6000,48,0,1],['Luxpower SNA6000 WPV',6000,48,0,1],['Deye SUN-8K-SG01LP1-EU',8000,48,0,1],
+  ['Deye SUN-12K-SG04LP3-EU (3 фази)',12000,48,0,1],
+].map(([n,w,v,lf,hyb])=>({n,w,v,lf:!!lf,hyb:!!hyb}));
+const invLabel=m=>`${m.n} — ${fmt(m.w)} Вт, ${m.v} В${m.lf?', трансформаторний':''}${m.hyb?', гібрид':''}`;
+
+const BMSM=[
+  {n:'JK BMS B2A8S20P (4–8S, 200 А, активний балансир 2 А)',s:[4,8],i:200},
+  {n:'JK BMS BD6A20S10P (8–20S, 100 А, балансир 0.6 А)',s:[8,20],i:100},
+  {n:'JK BMS B2A24S15P (8–24S, 150 А, активний балансир 1.5 А)',s:[8,24],i:150},
+  {n:'JK BMS B2A20S20P (8–20S, 200 А, активний балансир 2 А)',s:[8,20],i:200},
+  {n:'JK Inverter BMS PB2A16S15P (16S, 150 А, CAN/RS485)',s:[16,16],i:150},
+  {n:'JK Inverter BMS PB2A16S20P (16S, 200 А, CAN/RS485)',s:[16,16],i:200},
+  {n:'Seplos BMS 10E (16S, 200 А, CAN/RS485)',s:[16,16],i:200},
+];
+[4,7,8,13,14,16].forEach(s=>[60,100,150,200,250].forEach(i=>BMSM.push({n:`Daly Smart BMS ${s}S ${i} А${s===16?' (CAN/RS485)':''}`,s:[s,s],i})));
+
 let rows=JSON.parse(JSON.stringify(DEFAULT_ROWS));
-let bom={};        // key -> {price,qty,name,on}
+let bom={};        // key -> {sel, text, mode, qty, on}
+let prices={};     // повна назва компонента -> ціна (ваш прайс)
+let userCat={};    // key -> [свої варіанти]
 let custom=[];     // {name,qty,unit,price,on,svc}
 let docType='invoice';
 let items=[];      // поточні авто-позиції
 let X={};          // поточний розрахунок
 
-const FIELDS=['outH','invKind','invType','sysV','invReserve','invEff','invIdle','chem','cellV','cellAh','cellI','cellVmin','cellVlow','cellVmax','dod','sMode','sManual','temp','aging','gridH','chgA','cableL','markup','docNo','docDate','seller','client','docNote'];
+const FIELDS=['outH','invModel','invKind','invType','sysV','invReserve','invEff','invIdle','chem','cellModel','cellV','cellAh','cellI','cellVmin','cellVlow','cellVmax','dod','sMode','sManual','temp','aging','gridH','chgA','cableL','cabSize','fuseSel','markup','docNo','docDate','seller','client','docNote'];
 const v=id=>{const x=parseFloat(String($(id).value).replace(',','.'));return isNaN(x)?null:x};
 const pnum=s=>{const x=parseFloat(String(s??'').replace(/\s/g,'').replace(',','.'));return isNaN(x)?null:x};
 
+function fillCellModels(){
+  const ch=$('chem').value, cur=$('cellModel').value;
+  $('cellModel').innerHTML=CELLS[ch].map(m=>`<option value="${esc(m.id)}">${esc(cellLabel(m,ch))}</option>`).join('')+`<option value="">Свій (параметри вручну)</option>`;
+  $('cellModel').value=CELLS[ch].some(m=>m.id===cur)?cur:'';
+}
+function applyCellModel(){
+  const m=CELLS[$('chem').value].find(x=>x.id===$('cellModel').value); if(!m)return;
+  $('cellAh').value=m.ah;$('cellI').value=m.i;
+}
 function applyChem(c){
-  const p=CHEM[c]; if(c==='custom')return;
-  $('cellV').value=p.v;$('cellAh').value=p.ah;$('cellI').value=p.i;$('cellVmin').value=p.vmin;$('cellVlow').value=p.vlow;$('cellVmax').value=p.vmax;$('dod').value=p.dod;
+  const p=CHEM[c];
+  if(c!=='custom'){$('cellV').value=p.v;$('cellAh').value=p.ah;$('cellI').value=p.i;$('cellVmin').value=p.vmin;$('cellVlow').value=p.vlow;$('cellVmax').value=p.vmax;$('dod').value=p.dod;}
+  fillCellModels(); $('cellModel').value=CELL_DEF[c]||''; applyCellModel();
+}
+(function fillStatic(){
+  $('cabSize').innerHTML='<option value="auto">Авто</option>'+CABLE.map(([s,a])=>`<option value="${s}">${s} мм² (до ${a} А)</option>`).join('');
+  $('fuseSel').innerHTML='<option value="auto">Авто</option>'+FUSE.map(f=>`<option value="${f}">${f} А</option>`).join('');
+})();
+let pendingInv=null;
+function fillInvModels(needW,Ps){
+  const cur=pendingInv??$('invModel').value; pendingInv=null;
+  const ok=m=>m.w>=needW&&m.w*(m.lf?3:2)>=Ps;
+  const good=INVM.filter(ok), bad=INVM.filter(m=>!ok(m));
+  $('invModel').innerHTML=`<option value="auto">Авто — будь-яка марка (${fmt(pick(INV,needW)||needW)} Вт)</option>`+
+    (good.length?`<optgroup label="✓ Підходять">${good.map(m=>`<option value="${esc(m.n)}">${esc(invLabel(m))}</option>`).join('')}</optgroup>`:'')+
+    (bad.length?`<optgroup label="Замалі для цього навантаження">${bad.map(m=>`<option value="${esc(m.n)}">${esc(invLabel(m))}</option>`).join('')}</optgroup>`:'');
+  $('invModel').value=INVM.some(m=>m.n===cur)?cur:'auto';
 }
 
 /* ---------- прилади ---------- */
@@ -391,10 +466,15 @@ function calc(){
   });
   const Ps=Pc+maxExtra;
   const reserve=v('invReserve')||1.25, eff=(v('invEff')||90)/100, idle=v('invIdle')||0;
-  const type=$('invType').value, kind=$('invKind').value, sf=type==='lf'?3:2;
-  const needW=Math.max(Pc*reserve,Ps/sf);
-  const invW=pick(INV,needW)||ceil(needW/1000)*1000;
-  const V=$('sysV').value==='auto'?(invW<=1500?12:invW<=3600?24:48):+$('sysV').value;
+  let type=$('invType').value, kind=$('invKind').value;
+  const needW=Math.max(Pc*reserve,Ps/(type==='lf'?3:2));
+  fillInvModels(Math.max(Pc*reserve,Ps/3),Ps);
+  const IM=INVM.find(m=>m.n===$('invModel').value)||null;
+  ['invKind','invType','sysV'].forEach(id=>$(id).disabled=!!IM);
+  let invW,V;
+  if(IM){invW=IM.w;V=IM.v;type=IM.lf?'lf':'hf';kind=IM.hyb?'hybrid':'ups';$('invType').value=type;$('invKind').value=kind;$('sysV').value=String(V);}
+  else{invW=pick(INV,needW)||ceil(needW/1000)*1000;V=$('sysV').value==='auto'?(invW<=1500?12:invW<=3600?24:48):+$('sysV').value;}
+  const sf=type==='lf'?3:2;
   const cV=v('cellV')||3.2,cAh=v('cellAh')||1,cI=v('cellI')||1,cVmin=v('cellVmin')||cV*0.85,cVlow=v('cellVlow')||cV*0.93,cVmax=v('cellVmax')||cV*1.13;
   const dod=(v('dod')||80)/100,tf=+$('temp').value,aging=(v('aging')||0)/100;
   const S=$('sMode').value==='man'?Math.max(1,Math.round(v('sManual')||1)):Math.max(1,Math.round(V*1.0667/cV));
@@ -408,11 +488,16 @@ function calc(){
   const aut=Pavg>0?usable/Pavg:Infinity, autEol=Pavg>0?usable*(1-aging)/Pavg:Infinity;
   const kg=Wh/C.whkg;
   const Ibms=pick(BMS_STD,Math.max(Iinv,Iload*1.25))||ceil(Iinv/50)*50;
-  const fuse=pick(FUSE,Iinv*1.25)||ceil(Iinv*1.25/100)*100;
+  const fuseAuto=pick(FUSE,Iinv*1.25)||ceil(Iinv*1.25/100)*100;
   const L=v('cableL')||1.5;
   const Sdrop=0.0175*2*L*Iinv/(0.02*Vn);
-  let cab=CABLE.find(([s,a])=>a>=Iinv&&s>=Sdrop), cabPar=1;
-  if(!cab){cabPar=2;cab=CABLE.find(([s,a])=>a*2>=Iinv&&s*2>=Sdrop)||CABLE[CABLE.length-1]}
+  let cabAuto=CABLE.find(([s,a])=>a>=Iinv&&s>=Sdrop), cabParAuto=1;
+  if(!cabAuto){cabParAuto=2;cabAuto=CABLE.find(([s,a])=>a*2>=Iinv&&s*2>=Sdrop)||CABLE[CABLE.length-1]}
+  $('cabSize').options[0].textContent=`Авто (${cabParAuto>1?cabParAuto+'×':''}${cabAuto[0]} мм²)`;
+  $('fuseSel').options[0].textContent=`Авто (${fuseAuto} А)`;
+  let cab=cabAuto,cabPar=cabParAuto;
+  if($('cabSize').value!=='auto'){cab=CABLE.find(c=>c[0]===+$('cabSize').value)||cabAuto;cabPar=1;}
+  const fuse=$('fuseSel').value==='auto'?fuseAuto:+$('fuseSel').value;
   const cr=C.cr, gridH=v('gridH')||0, AhUsed=Edc/Vn;
   const Ineed=gridH>0?AhUsed*C.k/gridH:0, Imax=Ah*cr[1];
   const chgAuto=r5(Math.min(Imax,Math.max(Ah*cr[0],Ineed)));
@@ -420,7 +505,7 @@ function calc(){
   $('chgA').placeholder=`авто: ${chgAuto} А`;
 
   X={chemKey,C,T,Eac,Edc,Pc,Ps,biggest,needW,invW,V,type,kind,S,P,N,cV,cAh,cI,Vn,Vmin,Vmax,Ah,Wh,usable,aut,autEol,Pavg,AhNeed,WhNeed,Pcap,Pcur,
-     Iload,Ipeak,Iinv,Ibms,fuse,cab,cabPar,L,chgA,tChg,Pchg,kg,tf};
+     Iload,Ipeak,Iinv,Ibms,fuse,fuseAuto,cab,cabPar,L,chgA,tChg,Pchg,kg,tf,IM};
 
   $('kInv').textContent=`${fmt(invW)} Вт · ${V} В`;
   $('kInvD').textContent=`чиста синусоїда, пік ≥ ${fmt(Ps)} Вт`;
@@ -473,12 +558,19 @@ function calc(){
   if(gridH>0&&tChg>gridH)W.push(['bad',`Не встигне зарядитися за ${h(gridH)} світла: потрібно ${h(tChg)}. Потрібен струм заряду ≈ ${fmt(ceil(Ineed))} А${Ineed>Imax?' — більше, ніж батарея приймає, збільште ємність':''}.`]);
   if(chgA>Imax*1.01)W.push(['bad',`Струм заряду ${fmt(chgA)} А більший за допустимий для збірки (≈ ${fmt(Imax)} А).`]);
   if((chemKey==='lfp'||chemKey==='nmc')&&tf<=0.8)W.push(['bad','Літій не можна заряджати нижче 0 °C — потрібен підігрів (додано в кошторис) або BMS із забороною заряду на морозі.']);
+  if(IM&&IM.w<needW)W.push(['bad',`Обраний інвертор ${IM.n} (${fmt(IM.w)} Вт) замалий: потрібно ≥ ${fmt(needW)} Вт.`]);
+  else if(IM&&IM.w*sf<Ps)W.push(['bad',`Обраний інвертор може не витягнути пуск ${fmt(Ps)} Вт.`]);
+  if(cab[1]*cabPar<Iinv)W.push(['bad',`Кабель ${cab[0]} мм² розрахований на ~${cab[1]} А, а струм інвертора до ${fmt(Iinv)} А — візьміть товщий.`]);
+  else if(0.0175*2*L*Iinv/(cab[0]*cabPar)>0.02*Vn*1.01)W.push(['',`На кабелі ${cab[0]} мм² довжиною ${fmt(L,1)} м падіння напруги більше 2% — бажано товщий або коротший.`]);
+  if(fuse<Iinv*1.1)W.push(['bad',`Запобіжник ${fuse} А може перегорати при повній потужності (струм до ${fmt(Iinv)} А). Рекомендовано ${fuseAuto} А.`]);
+  if(fuse>cab[1]*cabPar*1.25)W.push(['bad',`Запобіжник ${fuse} А не захистить кабель ${cab[0]} мм² (до ~${cab[1]*cabPar} А).`]);
   if(Pchg+Pc>3500)W.push(['',`Під час заряду з мережі береться ≈ ${fmt(Pchg+Pc)} Вт (заряд + прилади). Перевірте автомат і проводку на вводі.`]);
   if(!W.some(w=>w[0]==='bad'))W.push(['ok','Критичних проблем не знайдено.']);
   $('warns').innerHTML=W.map(([c,t])=>`<li class="${c}">${t}</li>`).join('');
   X.W=W;
 
   items=buildBom(X);
+  migrateOld();
   drawPack(S,P,C.unit,cAh,cV);
   renderBom();
   updateTotals();
@@ -486,50 +578,107 @@ function calc(){
 
 /* ---------- кошторис ---------- */
 function buildBom(x){
-  const {C,chemKey,S,P,N,cAh,Ibms,fuse,cab,cabPar,L,invW,V,Ps,chgA,type,kind,tf}=x;
+  const {C,chemKey,S,P,N,cAh,Ibms,fuse,cab,cabPar,L,invW,V,Ps,type,kind,tf,IM,Iinv,needW}=x;
   const lith=C.bms, mm=cab[0], out=[];
-  const add=(key,grp,name,qty,unit,est,on=true,svc=false)=>out.push({key,grp,name,qty,unit,est:r10(est),on,svc});
-  const cellEst=chemKey==='custom'?C.price:C.price*(cAh/C.ah);
-  add('cell','bat',C.name(cAh),N,'шт',cellEst);
+  const S_=a=>a.map(v=>typeof v==='string'?{v,label:v}:v);
+  const add=o=>{o.opts=S_(o.opts);if(o.rec==null)o.rec=o.opts[0].v;out.push({on:true,svc:false,...o,est:r10(o.est)})};
+
+  // інвертор
+  const genInv=`Інвертор ${kind==='hybrid'?'гібридний':'з зарядкою (ДБЖ)'}${type==='lf'?' низькочастотний':''}, ${fmt(invW)} Вт, ${V} В, чиста синусоїда`;
+  add({key:'inverter',grp:'inv',master:'invModel',cur:IM?IM.n:'auto',rec:'auto',qty:1,unit:'шт',
+    est:(INV_PRICE[pick(INV,invW)||invW]||invW*7)*(kind==='ups'?0.75:1)*(type==='lf'?1.3:1),
+    opts:[{v:'auto',label:`Будь-яка марка — ${fmt(invW)} Вт, ${V} В`},...(()=>{const ok=m=>m.w>=needW&&m.w*(m.lf?3:2)>=Ps;return [...INVM.filter(ok).map(m=>({v:m.n,label:invLabel(m),grp:'✓ Підходять'})),...INVM.filter(m=>!ok(m)).map(m=>({v:m.n,label:invLabel(m),grp:'Замалі для цього навантаження'}))]})()],
+    nameOf:s=>{const m=INVM.find(q=>q.n===s);return m?`Інвертор ${m.n} (${fmt(m.w)} Вт, ${m.v} В${m.lf?', трансформаторний':''})`:genInv}});
+
+  // елементи
+  const models=CELLS[chemKey]||[], curM=models.find(m=>m.id===$('cellModel').value);
+  add({key:'cell',grp:'bat',master:'cellModel',cur:curM?curM.id:'',rec:curM?curM.id:'',qty:N,unit:'шт',
+    est:chemKey==='custom'?C.price:C.price*(cAh/C.ah),
+    opts:[...models.map(m=>({v:m.id,label:cellLabel(m,chemKey)})),{v:'',label:`Інший елемент (${cAh} А·год, параметри вручну)`}],
+    nameOf:s=>{const m=models.find(q=>q.id===s);return m?cellBomName(m,chemKey):C.name(cAh)}});
+
   if(lith){
-    add('bms','bat',`BMS ${S}S ${Ibms} А (зв'язок з інвертором CAN/RS485)`,1,'шт',1200+Ibms*18+S*60);
-    add('balancer','bat',`Активний балансир ${S}S 1–2 А (якщо немає в BMS)`,1,'шт',1800,false);
-    add('busbar','bat','Шини / перемички між комірками',Math.max(1,N-1),'шт',60);
-    add('case','bat',`Корпус / бокс для збірки ${S}S${P}P (стяжка, ізоляція)`,1,'шт',1000+N*150);
-    if(chemKey==='nmc')add('nickel','bat','Нікелева стрічка, ізоляційні кільця, тримачі банок',1,'компл',600+N*4);
-    add('heater','bat','Підігрів батареї (плівкові нагрівачі + термостат)',1,'компл',1200,tf<=0.8);
+    const fit=BMSM.filter(b=>S>=b.s[0]&&S<=b.s[1]).sort((a,b)=>a.i-b.i||a.n.localeCompare(b.n));
+    add({key:'bms',grp:'bat',qty:1,unit:'шт',est:1200+Ibms*18+S*60,
+      opts:[{v:'gen',label:`BMS ${S}S ${Ibms} А — будь-якої марки (CAN/RS485)`},
+            ...fit.filter(b=>b.i>=Ibms).map(b=>({v:b.n,label:b.n,grp:`✓ Підходять (≥ ${Ibms} А)`})),
+            ...fit.filter(b=>b.i<Ibms).map(b=>({v:b.n,label:b.n,grp:'Замалий струм'}))],
+      check:s=>{const b=fit.find(q=>q.n===s);return b&&b.i<Ibms?`замало: потрібно ≥ ${Ibms} А`:''}});
+    add({key:'balancer',grp:'bat',qty:1,unit:'шт',est:1800,on:false,
+      opts:[{v:'b2',label:`Активний балансир 2 А індуктивний (JK) ${S}S`},{v:'b5',label:`Активний балансир 5 А конденсаторний (Heltec) ${S}S`},{v:'b10',label:`Активний балансир 10 А (Heltec) ${S}S`}]});
+    add({key:'busbar',grp:'bat',qty:Math.max(1,N-1),unit:'шт',est:60,
+      opts:['Шини з комплекту комірок','Шини мідні луджені 2×20 мм','Шини мідні гнучкі (плетені)','Шини з кабелю 25 мм² з наконечниками']});
+    add({key:'case',grp:'bat',qty:1,unit:'шт',est:1000+N*150,
+      opts:[{v:'box',label:`Бокс-конструктор для ${S}S${P>1?P+'P':''} ${fmt(cAh)} А·год, з колесами`},{v:'steel',label:`Металевий корпус для збірки ${S}S${P}P`},
+            {v:'plastic',label:'Пластиковий кейс + ізоляційні пластини'},{v:'diy',label:'Саморобний: шпильки-стяжки + текстоліт'}]});
+    if(chemKey==='nmc')add({key:'nickel',grp:'bat',qty:1,unit:'компл',est:600+N*4,
+      opts:['Нікелева стрічка 0.15×8 мм + ізоляційні кільця + тримачі банок','Мідно-нікелева стрічка + тримачі банок (великі струми)']});
+    add({key:'heater',grp:'bat',qty:1,unit:'компл',est:1200,on:tf<=0.8,
+      opts:['Плівкові нагрівачі + терморегулятор W1209','Силіконові нагрівальні пластини + термостат','Нагрівач, керований BMS (вихід підігріву JK)']});
   }else{
-    add('busbar','bat','Перемички між АКБ',Math.max(1,N-1),'шт',150);
-    add('case','bat','Стелаж / полиця для АКБ',1,'шт',1500,false);
+    add({key:'busbar',grp:'bat',qty:Math.max(1,N-1),unit:'шт',est:150,
+      opts:[{v:'cab',label:`Перемички з кабелю ${mm} мм² з наконечниками`},{v:'oem',label:'Перемички заводські (з комплекту АКБ)'}]});
+    add({key:'case',grp:'bat',qty:1,unit:'шт',est:1500,on:false,opts:['Стелаж металевий для АКБ','Бокс / ящик для АКБ','Полиця / тумба']});
   }
+
+  // монтаж
   const len=Math.ceil(L*cabPar*2)/2;
-  add('cableR','mnt',`Кабель силовий мідний ${mm} мм², червоний (+)`,len,'м',mm*7);
-  add('cableB','mnt',`Кабель силовий мідний ${mm} мм², чорний (−)`,len,'м',mm*7);
-  add('lugs','mnt',`Наконечники кабельні мідні ${mm} мм²`,4*cabPar,'шт',30+mm*1.5);
-  add('fuse','mnt',`Запобіжник ${fuse} А (ANL/MEGA) з тримачем`,1,'компл',300+fuse*2);
-  add('dcbreaker','mnt',`Автомат / роз'єднувач DC ${fuse} А`,1,'шт',600+fuse*4,false);
-  add('monitor','mnt','Шунт / монітор заряду АКБ',1,'шт',1500,false);
-  add('misc','mnt','Дрібниці: термоусадка, кріплення, стяжки, ізострічка',1,'компл',500);
-  add('acwiring','mnt','Електромонтаж AC: автомати, кабель, розетки',1,'компл',2500,false);
-  const invName=`Інвертор ${kind==='hybrid'?'гібридний':'з зарядкою (ДБЖ)'}${type==='lf'?' низькочастотний':''}, ${fmt(invW)} Вт, ${V} В, чиста синусоїда`;
-  let invEst=(INV_PRICE[invW]||invW*7)*(kind==='ups'?0.75:1)*(type==='lf'?1.3:1);
-  add('inverter','inv',invName,1,'шт',invEst);
-  add('workBat','svc',lith?'Робота: збірка акумулятора, налаштування BMS':'Робота: збірка батареї АКБ',1,'посл.',lith?1500+N*50:500,true,true);
-  add('workInst','svc','Робота: монтаж і налаштування інвертора',1,'посл.',2000,false,true);
-  add('delivery','svc','Доставка / виїзд',1,'посл.',500,false,true);
+  const CT=['Кабель зварювальний мідний (КГ/КОГ)','Кабель силіконовий мідний','Кабель ПВ3 мідний','Кабель автомобільний OFC'];
+  add({key:'cableR',grp:'mnt',qty:len,unit:'м',est:mm*7,opts:CT.map(t=>({v:t,label:`${t} ${mm} мм², червоний (+)`}))});
+  add({key:'cableB',grp:'mnt',qty:len,unit:'м',est:mm*7,opts:CT.map(t=>({v:t,label:`${t} ${mm} мм², чорний (−)`}))});
+  add({key:'lugs',grp:'mnt',qty:4*cabPar,unit:'шт',est:30+mm*1.5,rec:mm>=70?'M10':'M8',
+    opts:['M6','M8','M10','M12'].map(b=>({v:b,label:`Наконечники мідні луджені ${mm} мм² під болт ${b}`}))});
+  add({key:'fuse',grp:'mnt',qty:1,unit:'компл',est:300+fuse*2,
+    opts:[{v:'ANL',label:`Запобіжник ANL ${fuse} А з тримачем`},{v:'MEGA',label:`Запобіжник MEGA ${fuse} А з тримачем`},
+          {v:'MRBF',label:`Запобіжник MRBF ${fuse} А на клему АКБ`},{v:'NH00',label:`Запобіжник NH00 ${fuse} А з тримачем (ножовий)`}],
+    check:s=>s==='MRBF'&&fuse>300?'MRBF буває до 300 А':''});
+  add({key:'dcbreaker',grp:'mnt',qty:1,unit:'шт',est:600+fuse*4,on:false,
+    opts:[{v:'ab',label:`Автомат DC 2P ${fuse} А`},{v:'sw',label:`Вимикач батареї (роз'єднувач) ${Math.max(300,fuse)} А`},{v:'nh',label:`Рубильник із запобіжниками NH ${fuse} А`}]});
+  const sh=pick([100,200,300,400,500],Iinv)||500;
+  add({key:'monitor',grp:'mnt',qty:1,unit:'шт',est:1500,on:false,
+    opts:[{v:'jt',label:`Монітор Junctek KH-F з шунтом ${sh} А`},{v:'ss',label:'Victron SmartShunt 500 А'},{v:'bmv',label:'Victron BMV-712 Smart'}]});
+  add({key:'misc',grp:'mnt',qty:1,unit:'компл',est:500,opts:['Дрібниці: термоусадка, кріплення, стяжки, ізострічка','Дрібниці + кабель-канал / гофра']});
+  add({key:'acwiring',grp:'mnt',qty:1,unit:'компл',est:2500,on:false,
+    opts:['Автомат вводу + перемикач мережа/інвертор','Автомати + кабель ВВГ 3×2.5 (до 10 м) + розетки','Окремий щиток резервної лінії (автомати, ПЗВ)']});
+
+  // роботи
+  add({key:'workBat',grp:'svc',svc:true,qty:1,unit:'посл.',est:lith?1500+N*50:500,
+    opts:lith?['Робота: збірка акумулятора, налаштування BMS','Робота: збірка + тест ємності комірок',"Робота: збірка під ключ (корпус, маркування, BMS, зв'язок з інвертором)"]
+             :['Робота: збірка батареї АКБ','Робота: збірка + перевірка АКБ навантаженням']});
+  add({key:'workInst',grp:'svc',svc:true,qty:1,unit:'посл.',est:2000,on:false,
+    opts:['Робота: монтаж і налаштування інвертора','Робота: монтаж + підключення до щитка (резервна лінія)','Робота: монтаж з підключенням сонячних панелей']});
+  add({key:'delivery',grp:'svc',svc:true,qty:1,unit:'посл.',est:500,on:false,opts:['Доставка Новою поштою','Виїзд по місту','Виїзд за місто']});
   return out;
 }
 const GRP={inv:'Інвертор',bat:'Акумулятор',mnt:'Монтажні матеріали',svc:'Роботи та послуги'};
+const labelOf=(it,v)=>(it.nameOf?it.nameOf(v):((it.opts.find(o=>o.v===v)||{}).label||v));
 
 function effItems(){
-  // повертає всі позиції з урахуванням правок користувача
   const a=items.map(it=>{
     const s=bom[it.key]||{};
-    const qty=pnum(s.qty)??it.qty, price=pnum(s.price);
-    return {...it,id:it.key,name:s.name||it.name,qty,price,on:s.on==null?it.on:s.on,auto:true};
+    const selV=it.master?it.cur:(s.sel!=null&&it.opts.some(o=>o.v===s.sel)?s.sel:it.rec);
+    const name=s.text?s.text:labelOf(it,selV);
+    const qty=pnum(s.qty)??it.qty, price=pnum(prices[name]);
+    return {...it,id:it.key,selV,name,qty,price,on:s.on==null?it.on:s.on,auto:true,mode:s.mode||'list',text:s.text||null,
+            warnTxt:it.check&&!s.text?it.check(selV):''};
   });
   custom.forEach((c,i)=>a.push({id:'_c'+i,grp:c.svc?'svc':'own',name:c.name,qty:pnum(c.qty)??0,unit:c.unit||(c.svc?'посл.':'шт'),price:pnum(c.price),est:null,on:c.on!==false,svc:!!c.svc,auto:false,ci:i}));
   return a;
+}
+function nameCell(x){
+  const k=x.id;
+  if(!x.auto)return `<input data-k="${k}" data-f="name" value="${esc(x.name)}">`;
+  if(x.mode==='text')return `<div class="nmwrap"><input data-k="${k}" data-f="text" value="${esc(x.text||'')}" placeholder="Вкажіть свою назву / модель"><button data-back="${k}" title="Повернутись до списку">Список</button></div>`;
+  const uc=userCat[k]||[], cur=x.text?'u:'+x.text:'o:'+x.selV;
+  const opt=(val,label)=>`<option value="${esc(val)}"${val===cur?' selected':''}>${esc(label)}</option>`;
+  let h='',g=null;
+  x.opts.forEach(o=>{const og=o.grp||null;if(og!==g){if(g)h+='</optgroup>';g=og;if(g)h+=`<optgroup label="${esc(g)}">`}h+=opt('o:'+o.v,o.label)});
+  if(g)h+='</optgroup>';
+  const mine=[...uc]; if(x.text&&!mine.includes(x.text))mine.push(x.text);
+  if(mine.length)h+=`<optgroup label="Мої варіанти">${mine.map(n=>opt('u:'+n,n)).join('')}</optgroup>`;
+  h+=`<option value="__new">✏️ Свій варіант…</option>`;
+  if(uc.length)h+=`<option value="__del">🗑 Очистити мої варіанти в цьому списку</option>`;
+  return `<select data-k="${k}" data-f="sel" class="${x.text||(!x.master&&x.selV!==x.rec)?'chosen':''}">${h}</select>`+(x.name.length>28?`<div class="full">${esc(x.name)}</div>`:'')+(x.warnTxt?`<div class="rec">⚠ ${esc(x.warnTxt)}</div>`:'');
 }
 function renderBom(){
   const all=effItems();
@@ -540,11 +689,10 @@ function renderBom(){
     html+=`<tr class="grp"><td colspan="7">${names[g]}</td></tr>`;
     list.forEach(x=>{
       const k=x.id;
-      const autoQty=x.auto?items.find(i=>i.key===k).qty:null;
       html+=`<tr data-k="${k}" class="${x.on?'':'off'} ${x.on&&x.price==null?'noprice':''}">
         <td class="ck"><input type="checkbox" data-k="${k}" data-f="on" ${x.on?'checked':''} title="Включити в кошторис"></td>
-        <td class="nm"><input data-k="${k}" data-f="name" value="${esc(x.name)}"></td>
-        <td class="q" data-l="К-сть, ${esc(x.unit)}"><input data-k="${k}" data-f="qty" type="number" inputmode="decimal" min="0" step="any" value="${x.qty}" ${autoQty!=null?`placeholder="${autoQty}"`:''}></td>
+        <td class="nm">${nameCell(x)}</td>
+        <td class="q" data-l="К-сть, ${esc(x.unit)}"><input data-k="${k}" data-f="qty" type="number" inputmode="decimal" min="0" step="any" value="${x.qty}" ${x.auto?`placeholder="${x.qty}"`:''}></td>
         <td class="u">${esc(x.unit)}</td>
         <td class="p" data-l="Ціна, грн"><input data-k="${k}" data-f="price" type="number" inputmode="decimal" min="0" step="any" value="${x.price??''}" placeholder="${x.est!=null?'≈ '+money(x.est):'ціна'}"></td>
         <td class="sum" id="sum-${k}">0</td>
@@ -553,29 +701,66 @@ function renderBom(){
   });
   $('bomBody').innerHTML=html;
 }
-function setItem(k,f,val){
-  if(k.startsWith('_c')){const c=custom[+k.slice(2)];if(c)c[f]=val;return}
-  const it=items.find(i=>i.key===k); bom[k]=bom[k]||{};
-  if(f==='name')bom[k].name=(val===it.name||val==='')?null:val;
-  else if(f==='qty')bom[k].qty=(val===''||pnum(val)===it.qty)?null:val;
-  else bom[k][f]=val;
-}
+function curName(k){const x=effItems().find(i=>i.id===k);return x?x.name:null}
 $('bomBody').addEventListener('input',e=>{
-  const t=e.target,k=t.dataset.k,f=t.dataset.f; if(!k)return;
-  setItem(k,f,t.type==='checkbox'?t.checked:t.value);
-  const tr=t.closest('tr');
-  if(f==='on')tr.classList.toggle('off',!t.checked);
+  const t=e.target,k=t.dataset.k,f=t.dataset.f; if(!k||t.tagName==='SELECT')return;
+  if(k.startsWith('_c')){const c=custom[+k.slice(2)];if(c)c[f]=t.type==='checkbox'?t.checked:t.value;}
+  else{
+    const it=items.find(i=>i.key===k); bom[k]=bom[k]||{};
+    if(f==='on')bom[k].on=t.checked;
+    else if(f==='qty')bom[k].qty=(t.value===''||pnum(t.value)===it.qty)?null:t.value;
+    else if(f==='text')bom[k].text=t.value;
+    else if(f==='price'){const n=curName(k);if(n){if(t.value==='')delete prices[n];else prices[n]=t.value}}
+  }
+  if(f==='on')t.closest('tr').classList.toggle('off',!t.checked);
   updateTotals();
 });
-$('bomBody').addEventListener('click',e=>{const d=e.target.dataset.delc;if(d!=null){custom.splice(+d,1);renderBom();updateTotals();}});
+$('bomBody').addEventListener('change',e=>{
+  const t=e.target,k=t.dataset.k,f=t.dataset.f; if(!k)return;
+  if(f==='sel'){
+    const val=t.value, it=items.find(i=>i.key===k); bom[k]=bom[k]||{};
+    if(val==='__new'){bom[k].mode='text';bom[k].text='';renderBom();updateTotals();const el=document.querySelector(`#bomBody input[data-k="${k}"][data-f="text"]`);if(el)el.focus();return}
+    if(val==='__del'){if(bom[k].text&&(userCat[k]||[]).includes(bom[k].text))bom[k].text=null;userCat[k]=[];}
+    else if(val.startsWith('u:')){bom[k].text=val.slice(2);bom[k].mode='list';}
+    else if(val.startsWith('o:')){
+      const v_=val.slice(2); bom[k].text=null; bom[k].mode='list';
+      if(it.master){
+        $(it.master).value=v_;
+        if(it.master==='cellModel')applyCellModel();
+        if(it.master==='invModel'&&v_==='auto')$('sysV').value='auto';
+        calc();return;
+      }
+      bom[k].sel=v_===it.rec?null:v_;
+    }
+    renderBom();updateTotals();
+  }else if(f==='text'){
+    const s=t.value.trim();
+    if(s){bom[k].text=s;userCat[k]=userCat[k]||[];if(!userCat[k].includes(s))userCat[k].push(s);}
+    else bom[k].text=null;
+    bom[k].mode='list';renderBom();updateTotals();
+  }else if(f==='price'||f==='qty'){renderVars();}
+});
+$('bomBody').addEventListener('click',e=>{
+  const d=e.target.dataset.delc;if(d!=null){custom.splice(+d,1);renderBom();updateTotals();return}
+  const b=e.target.dataset.back;if(b!=null){bom[b]=bom[b]||{};bom[b].mode='list';bom[b].text=null;renderBom();updateTotals();}
+});
 $('addItem').onclick=()=>{custom.push({name:'Нова позиція',qty:1,unit:'шт',price:'',on:true,svc:false});renderBom();updateTotals();focusLast()};
-$('addSvc').onclick=()=>{custom.push({name:'Робота: ',qty:1,unit:'посл.',price:'',on:true,svc:true});renderBom();updateTotals();focusLast(true)};
-function focusLast(svc){const k='_c'+(custom.length-1);const el=document.querySelector(`#bomBody input[data-k="${k}"][data-f="name"]`);if(el){el.focus();el.select()}}
+$('addSvc').onclick=()=>{custom.push({name:'Робота: ',qty:1,unit:'посл.',price:'',on:true,svc:true});renderBom();updateTotals();focusLast()};
+function focusLast(){const k='_c'+(custom.length-1);const el=document.querySelector(`#bomBody input[data-k="${k}"][data-f="name"]`);if(el){el.focus();el.select()}}
 $('fillEst').onclick=()=>{
-  let n=0; effItems().forEach(x=>{if(x.auto&&x.on&&x.price==null&&x.est!=null){bom[x.id]=bom[x.id]||{};bom[x.id].price=String(x.est);n++}});
+  let n=0; effItems().forEach(x=>{if(x.auto&&x.on&&x.price==null&&x.est!=null){prices[x.name]=String(x.est);n++}});
   renderBom();updateTotals();toast(n?`Підставлено цін: ${n}`:'Порожніх цін немає');
 };
-$('resetBom').onclick=()=>{Object.values(bom).forEach(s=>{s.name=null;s.qty=null});renderBom();updateTotals();toast('Назви й кількості — автоматичні')};
+$('resetBom').onclick=()=>{Object.values(bom).forEach(s=>{s.sel=null;s.text=null;s.mode='list';s.qty=null});renderBom();updateTotals();toast('Вибір і кількості — за замовчуванням')};
+let migrated=false;
+function migrateOld(){
+  if(migrated)return; migrated=true;
+  Object.keys(bom).forEach(k=>{const s=bom[k];
+    if(s.name){s.text=s.name;delete s.name}
+    if(s.price!=null&&s.price!==''){const n=curName(k);if(n&&prices[n]==null)prices[n]=s.price}
+    delete s.price;
+  });
+}
 
 function totals(){
   const m=(v('markup')||0)/100;
@@ -606,22 +791,26 @@ function updateTotals(){
 /* ---------- варіанти ---------- */
 function renderVars(){
   const x=X; if(!x.C)return;
-  const s=bom.cell||{}; const cellItem=items.find(i=>i.key==='cell');
-  const pCell=pnum(s.price)??(cellItem?cellItem.est:0);
+  const cellItem=effItems().find(i=>i.id==='cell');
+  const pCur=cellItem?(cellItem.price??cellItem.est):0;
+  const models=CELLS[x.chemKey]||[];
   const vars=x.C.vars||[x.cAh];
   const dod=(v('dod')||80)/100;
   $('vars').innerHTML=vars.map(a=>{
-    const iA=x.cI*a/x.cAh, Pv=Math.max(1,ceil(x.AhNeed/a-1e-9),ceil(x.Iload/iA-1e-9)), Nv=x.S*Pv, kWh=x.Vn*Pv*a/1000;
-    const autv=x.Pavg>0?kWh*1000*dod*x.tf/x.Pavg:Infinity, cost=Nv*pCell*a/x.cAh;
-    return `<tr data-ah="${a}" class="${a==x.cAh?'sel':''}"><td>${a} А·год</td><td>${x.S}S${Pv}P</td><td>${Nv}</td><td>${fmt(kWh,2)}</td><td>${fmt(autv,1)}</td><td>${money(r100(cost))}</td></tr>`;
+    const m=models.find(q=>q.ah===a);
+    const iA=m?m.i:x.cI*a/x.cAh, Pv=Math.max(1,ceil(x.AhNeed/a-1e-9),ceil(x.Iload/iA-1e-9)), Nv=x.S*Pv, kWh=x.Vn*Pv*a/1000;
+    const own=m?pnum(prices[cellBomName(m,x.chemKey)]):null;
+    const autv=x.Pavg>0?kWh*1000*dod*x.tf/x.Pavg:Infinity, cost=Nv*(own??pCur*a/x.cAh);
+    return `<tr data-ah="${a}" class="${a==x.cAh?'sel':''}"><td>${m?esc(m.n.replace(/ \(.*\)/,''))+' ':''}${a} А·год</td><td>${x.S}S${Pv}P</td><td>${Nv}</td><td>${fmt(kWh,2)}</td><td>${fmt(autv,1)}</td><td>${money(r100(cost))}${own!=null?'':' ≈'}</td></tr>`;
   }).join('');
 }
 $('vars').addEventListener('click',e=>{
   const tr=e.target.closest('tr');if(!tr)return;const a=+tr.dataset.ah, cAh=v('cellAh');if(!a||a===cAh)return;
-  $('cellI').value=Math.round((v('cellI')||1)*a/cAh*10)/10;
-  if(bom.cell&&pnum(bom.cell.price)!=null)bom.cell.price=String(r10(pnum(bom.cell.price)*a/cAh));
-  if(bom.cell)bom.cell.name=null;
-  $('cellAh').value=a;calc();
+  const m=(CELLS[$('chem').value]||[]).find(q=>q.ah===a);
+  if(m){$('cellModel').value=m.id;applyCellModel();}
+  else{$('cellI').value=Math.round((v('cellI')||1)*a/cAh*10)/10;$('cellAh').value=a;$('cellModel').value='';}
+  if(bom.cell){bom.cell.text=null;bom.cell.mode='list'}
+  calc();
 });
 
 /* ---------- документ ---------- */
@@ -739,15 +928,19 @@ if(APP){
 $('mbar').onclick=()=>$('bomCard').scrollIntoView({behavior:'smooth'});
 
 const KEY='ups-calc-v2';
-function save(){try{const o={rows,bom,custom,docType};FIELDS.forEach(f=>o[f]=$(f).value);localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
-function load(){try{const o=JSON.parse(localStorage.getItem(KEY));if(!o)return false;FIELDS.forEach(f=>{if(o[f]!=null)$(f).value=o[f]});if(Array.isArray(o.rows))rows=o.rows;if(o.bom)bom=o.bom;if(Array.isArray(o.custom))custom=o.custom;if(o.docType)docType=o.docType;return true}catch(e){return false}}
+function save(){try{const o={rows,bom,custom,docType,prices,userCat};FIELDS.forEach(f=>o[f]=$(f).value);localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+function load(){try{const o=JSON.parse(localStorage.getItem(KEY));if(!o)return false;FIELDS.forEach(f=>{if(o[f]!=null)$(f).value=o[f]});if(Array.isArray(o.rows))rows=o.rows;if(o.bom)bom=o.bom;if(Array.isArray(o.custom))custom=o.custom;if(o.docType)docType=o.docType;if(o.prices)prices=o.prices;if(o.userCat)userCat=o.userCat;fillCellModels();if(o.cellModel!=null)$('cellModel').value=o.cellModel;pendingInv=o.invModel||null;return true}catch(e){return false}}
 
 const DOCF=['docNo','docDate','seller','client','docNote'];
 FIELDS.forEach(f=>{$(f).addEventListener('input',()=>{
   if(f==='outH')renderRows();
+  if(f==='cellModel')applyCellModel();
+  if(f==='invModel'&&$('invModel').value==='auto')$('sysV').value='auto';
+  if(f==='cellAh'||f==='cellI'){const m=(CELLS[$('chem').value]||[]).find(q=>q.id===$('cellModel').value);if(m&&(m.ah!==v('cellAh')||m.i!==v('cellI')))$('cellModel').value='';}
+  if(f==='chem')return;
   if(DOCF.includes(f)||f==='markup')updateTotals(); else calc();
 });});
-$('chem').addEventListener('change',e=>{applyChem(e.target.value);if(bom.cell){bom.cell.price='';bom.cell.name=null}calc()});
+$('chem').addEventListener('change',e=>{applyChem(e.target.value);if(bom.cell){bom.cell.text=null;bom.cell.mode='list'}calc()});
 $('reset').onclick=()=>{const keep={seller:$('seller').value};try{localStorage.removeItem(KEY);localStorage.setItem(KEY+'-seller',keep.seller)}catch(e){}location.reload()};
 
 const today=new Date(), ymd=today.toISOString().slice(0,10);
