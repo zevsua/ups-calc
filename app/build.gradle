@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+}
+
+def runNumber = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+
+android {
+    namespace 'ua.zevs.upscalc'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'ua.zevs.upscalc'
+        minSdk 21
+        targetSdk 34
+        versionCode runNumber
+        versionName "1.${runNumber}"
+    }
+
+    // Постійний ключ підпису, щоб нові версії ставилися поверх старих без видалення
+    signingConfigs {
+        fixed {
+            storeFile file('upscalc.keystore')
+            storePassword 'upscalc'
+            keyAlias 'upscalc'
+            keyPassword 'upscalc'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.fixed
+        }
+        debug {
+            signingConfig signingConfigs.fixed
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
