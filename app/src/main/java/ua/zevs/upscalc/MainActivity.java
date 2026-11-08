@@ -6,6 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -51,6 +54,18 @@ public class MainActivity extends Activity {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("Розрахунок ДБЖ", text));
             runOnUiThread(() -> Toast.makeText(MainActivity.this, "Скопійовано", Toast.LENGTH_SHORT).show());
+        }
+
+        @JavascriptInterface
+        public void print(String title) {
+            runOnUiThread(() -> {
+                PrintManager pm = (PrintManager) getSystemService(PRINT_SERVICE);
+                if (pm == null) return;
+                String name = (title == null || title.isEmpty()) ? "Рахунок" : title;
+                PrintDocumentAdapter adapter = web.createPrintDocumentAdapter(name);
+                pm.print(name, adapter, new PrintAttributes.Builder()
+                        .setMediaSize(PrintAttributes.MediaSize.ISO_A4).build());
+            });
         }
 
         @JavascriptInterface

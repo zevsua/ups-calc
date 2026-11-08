@@ -12,29 +12,31 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-ap
 header{padding:22px 20px 8px;max-width:1280px;margin:0 auto}
 h1{font-size:22px;margin:0 0 4px}
 header p{margin:0;color:var(--muted)}
-.wrap{max-width:1280px;margin:0 auto;padding:12px 20px 40px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
-@media (max-width:980px){.wrap{grid-template-columns:1fr}}
+.wrap{max-width:1280px;margin:0 auto;padding:12px 20px 0;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.wide{max-width:1280px;margin:0 auto;padding:0 20px 40px}
+.docgrid{display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.2fr);gap:18px;align-items:start}
+@media (max-width:980px){.wrap,.docgrid{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;margin-bottom:16px}
-.card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--acc);color:var(--card);font-size:12px;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px 12px}
 label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted)}
-input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:6px 8px;width:100%;min-width:0}
-input:focus,select:focus{outline:2px solid var(--acc);outline-offset:-1px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:6px 8px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:58px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:-1px}
 .hint{font-size:12px;color:var(--muted);margin:8px 0 0}
 table{width:100%;border-collapse:collapse}
-.loads th{font-size:11.5px;font-weight:600;color:var(--muted);text-align:left;padding:4px 3px;border-bottom:1px solid var(--line);white-space:nowrap}
-.loads td{padding:3px;border-bottom:1px solid var(--line)}
-.loads td input{padding:5px 6px}
+.loads th,.bom th{font-size:11.5px;font-weight:600;color:var(--muted);text-align:left;padding:4px 3px;border-bottom:1px solid var(--line);white-space:nowrap}
+.loads td,.bom td{padding:3px;border-bottom:1px solid var(--line)}
+.loads td input,.bom td input{padding:5px 6px}
 .loads .n{width:70px}.loads .s{width:58px}
-.loads input[type=checkbox]{width:18px;height:18px}
+input[type=checkbox]{width:18px;height:18px;padding:0}
 .tablewrap{overflow-x:auto}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
 button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
 button.pri{background:var(--acc);border-color:var(--acc);color:var(--card);font-weight:600}
 button.x{border:none;background:none;color:var(--muted);font-size:18px;padding:0 6px}
 button.x:hover{color:var(--bad)}
-.res{position:sticky;top:12px}
 .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .kpi{background:var(--acc2);border-radius:10px;padding:10px 12px}
 .kpi .t{font-size:12px;color:var(--muted)}
@@ -48,91 +50,130 @@ button.x:hover{color:var(--bad)}
 .warns li{padding:8px 10px;border-radius:8px;margin-bottom:6px;font-size:13.5px;background:var(--warnbg);color:var(--warn)}
 .warns li.bad{background:var(--badbg);color:var(--bad)}
 .warns li.ok{background:var(--acc2);color:var(--acc)}
-.shop th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:5px 4px}
-.shop td{padding:6px 4px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:top}
-.shop td.r,.shop th.r{text-align:right;white-space:nowrap}
-.shop tfoot td{font-weight:700;font-size:15px;border-bottom:none}
+/* кошторис */
+.bom td.q{width:84px}.bom td.u{width:52px;color:var(--muted);font-size:13px}.bom td.p{width:120px}.bom td.sum{width:110px;text-align:right;font-weight:600;white-space:nowrap}
+.bom th.r{text-align:right}
+.bom td.ck{width:30px;text-align:center}
+.bom tr.off td{opacity:.45}
+.bom tr.off td.ck{opacity:1}
+.bom tr.noprice td.p input{border-color:var(--warn);background:var(--warnbg)}
+.bom tr.grp td{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;padding-top:12px;border-bottom:none}
+.bom .tag{font-size:10.5px;color:var(--acc);background:var(--acc2);border-radius:4px;padding:1px 5px;margin-left:4px;white-space:nowrap}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+.totals div{background:var(--bg);border-radius:9px;padding:9px 11px;font-size:12px;color:var(--muted)}
+.totals b{display:block;font-size:18px;color:var(--ink);margin-top:2px}
+.totals .main{background:var(--acc);color:#fff}.totals .main b{color:#fff}
+.missing{font-size:13px;color:var(--warn);margin-top:8px}
+/* документ */
+.paper{background:#fff;color:#111;border:1px solid var(--line);border-radius:6px;padding:26px 26px 30px;font-size:13px;line-height:1.4;overflow-x:auto}
+.paper h3{font-size:18px;margin:0 0 2px;text-align:center}
+.paper .sub{text-align:center;color:#555;margin-bottom:14px}
+.paper .parties{display:grid;grid-template-columns:110px 1fr;gap:3px 10px;margin-bottom:12px}
+.paper .parties div:nth-child(odd){color:#555}
+.paper .subject{margin:0 0 12px}
+.paper table{border-collapse:collapse;width:100%;margin-bottom:10px}
+.paper th,.paper td{border:1px solid #999;padding:4px 6px;vertical-align:top}
+.paper th{background:#f0f0f0;font-weight:600;font-size:12px}
+.paper td.r,.paper th.r{text-align:right;white-space:nowrap}
+.paper td.c{text-align:center}
+.paper .tot{text-align:right;font-size:14px;margin:2px 0}
+.paper .tot b{font-size:15px}
+.paper .words{margin:8px 0 12px}
+.paper .note{white-space:pre-wrap;margin-top:10px}
+.paper .sign{display:flex;justify-content:space-between;gap:20px;margin-top:30px}
+.paper .sign div{flex:1;border-top:1px solid #333;padding-top:3px;font-size:12px;color:#555}
+.paper .tech{font-size:12px;color:#333;margin-top:12px}
+.paper .tech td{border:none;border-bottom:1px solid #ddd;padding:3px 4px}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:10px}
+.seg button{flex:1;border:none;border-radius:0;padding:8px 6px;font-size:13.5px;background:var(--card)}
+.seg button.on{background:var(--acc);color:var(--card);font-weight:600}
 .var td,.var th{font-size:13px;padding:5px 4px;border-bottom:1px solid var(--line);text-align:right}
 .var td:first-child,.var th:first-child{text-align:left}
 .var tr.sel td{background:var(--acc2);font-weight:600}
 .var tbody tr{cursor:pointer}
 .var tbody tr:hover td{background:var(--acc2)}
 #packsvg{width:100%;height:auto;display:block;margin-top:6px}
-.muted{color:var(--muted)}
-.small{font-size:12px}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:8px 14px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:8px 14px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
 .toast.on{opacity:1}
 .mbar{display:none}
 @media (max-width:980px){
   header{padding:14px 14px 4px}h1{font-size:19px}header p{font-size:13.5px}
-  .wrap{padding:8px 12px 96px}
+  .wrap{padding:8px 12px 0}.wide{padding:0 12px 96px}
   .card{padding:13px 12px 12px}
   .kpi .v{font-size:18px}
+  .paper{padding:16px 12px 20px;font-size:12px}
   .mbar{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;position:fixed;left:0;right:0;bottom:0;background:var(--acc);color:#fff;padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:5;box-shadow:0 -2px 10px rgba(0,0,0,.15);cursor:pointer}
   .mbar div{font-size:10.5px;opacity:.85;line-height:1.2}
   .mbar b{display:block;font-size:13.5px;opacity:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .toast{bottom:80px}
 }
 @media (max-width:640px){
-  .loads thead{display:none}
-  .loads,.loads tbody{display:block}
+  .loads thead,.bom thead{display:none}
+  .loads,.loads tbody,.bom,.bom tbody{display:block}
   .loads tr{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) 34px;gap:4px 6px;padding:9px 0;border-bottom:1px solid var(--line)}
-  .loads td{border:none;padding:0;display:block;width:auto!important}
+  .loads td,.bom td{border:none;padding:0;display:block;width:auto!important}
   .loads td:first-child{grid-column:1 / span 5}
   .loads td.del{grid-column:6;grid-row:1;align-self:center;text-align:center}
   .loads td.pk{grid-column:6;grid-row:2;align-self:end;text-align:center;padding-bottom:6px!important}
-  .loads td[data-l]::before{content:attr(data-l);font-size:10.5px;color:var(--muted);display:block;margin-bottom:1px}
+  .loads td[data-l]::before,.bom td[data-l]::before{content:attr(data-l);font-size:10.5px;color:var(--muted);display:block;margin-bottom:1px}
   .loads td input{padding:6px 5px}
+  .bom tr{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr) 30px;gap:4px 6px;padding:9px 0;border-bottom:1px solid var(--line);align-items:end}
+  .bom tr.grp{display:block;padding:12px 0 0;border:none}
+  .bom td.ck{grid-row:1;grid-column:1;align-self:center}
+  .bom td.nm{grid-row:1;grid-column:2 / span 3}
+  .bom td.dx{grid-row:1;grid-column:5;align-self:center;text-align:center}
+  .bom td.q{grid-row:2;grid-column:2}
+  .bom td.p{grid-row:2;grid-column:3}
+  .bom td.sum{grid-row:2;grid-column:4 / span 2;text-align:right;padding-bottom:7px}
+  .bom td.u{display:none}
+  .paper .parties{grid-template-columns:90px 1fr}
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff}
+  body *{visibility:hidden}
+  #doc,#doc *{visibility:visible}
+  #doc{position:absolute;left:0;top:0;width:100%;border:none;padding:0;font-size:12px}
+  .mbar,.toast{display:none}
 }
 </style>
 </head>
 <body>
 <header>
   <h1>Калькулятор системи безперебійного живлення</h1>
-  <p>Вкажіть прилади й тривалість відключення — програма підбере інвертор, порахує збірку акумулятора (S×P), BMS, запобіжник, кабель, зарядку та орієнтовну вартість.</p>
+  <p>Прилади → інвертор і збірка акумулятора → список покупок з вашими цінами → рахунок або прорахунок.</p>
 </header>
 
 <div class="wrap">
 <div>
-  <!-- 1. Навантаження -->
   <div class="card">
     <h2><span class="num">1</span>Що живимо</h2>
     <div class="grid" style="margin-bottom:10px">
-      <label>Тривалість відключення, год<input id="outH" type="number" min="0" step="0.5" value="4"></label>
-      <label>Додати прилад зі списку
-        <select id="preset"><option value="">— вибрати —</option></select>
-      </label>
+      <label>Тривалість відключення, год<input id="outH" type="number" inputmode="decimal" min="0" step="0.5" value="4"></label>
+      <label>Додати прилад зі списку<select id="preset"><option value="">— вибрати —</option></select></label>
     </div>
     <div class="tablewrap">
     <table class="loads">
-      <thead><tr><th>Прилад</th><th>Вт</th><th>К-сть</th><th title="Скільки годин працює за відключення. Порожньо = вся тривалість">Год</th><th title="Яку частку часу реально працює (холодильник ~40%)">Робота %</th><th title="У скільки разів пусковий струм більший за робочий (двигуни 3–5)">Пуск ×</th><th title="Може працювати одночасно з іншими — враховується в піковій потужності">У пік</th><th></th></tr></thead>
+      <thead><tr><th>Прилад</th><th>Вт</th><th>К-сть</th><th title="Скільки годин працює за відключення. Порожньо = вся тривалість">Год</th><th title="Яку частку часу реально працює (холодильник ~40%)">Робота %</th><th title="У скільки разів пусковий струм більший за робочий (двигуни 3–5)">Пуск ×</th><th title="Може працювати одночасно з іншими">У пік</th><th></th></tr></thead>
       <tbody id="loadBody"></tbody>
     </table>
     </div>
     <div class="row"><button id="addRow">+ Додати рядок</button></div>
-    <p class="hint">«Робота %» — для приладів, що вмикаються циклами (холодильник, насос). «У пік» — зніміть галочку з того, що ніколи не вмикаєте разом з іншим (наприклад, чайник і мікрохвильовку по черзі).</p>
+    <p class="hint">«Робота %» — для приладів, що вмикаються циклами (холодильник, насос). «Пік» — зніміть галочку з того, що не вмикаєте одночасно з іншим (чайник і мікрохвильовка по черзі).</p>
   </div>
 
-  <!-- 2. Інвертор -->
   <div class="card">
     <h2><span class="num">2</span>Інвертор</h2>
     <div class="grid">
-      <label>Тип
-        <select id="invKind"><option value="hybrid">Гібридний (мережа + АКБ + сонце)</option><option value="ups">Інвертор/ДБЖ із зарядкою (без сонця)</option></select>
-      </label>
-      <label>Схема
-        <select id="invType"><option value="hf">Високочастотний (пуск ×2)</option><option value="lf">Низькочастотний, трансформаторний (пуск ×3)</option></select>
-      </label>
-      <label>Напруга системи (АКБ)
-        <select id="sysV"><option value="auto">Авто</option><option value="12">12 В</option><option value="24">24 В</option><option value="48">48 В</option></select>
-      </label>
-      <label>Запас потужності, ×<input id="invReserve" type="number" step="0.05" min="1" value="1.25"></label>
-      <label>ККД інвертора, %<input id="invEff" type="number" min="50" max="99" value="90"></label>
-      <label>Власне споживання, Вт<input id="invIdle" type="number" min="0" value="40"></label>
+      <label>Тип<select id="invKind"><option value="hybrid">Гібридний (мережа + АКБ + сонце)</option><option value="ups">Інвертор/ДБЖ із зарядкою (без сонця)</option></select></label>
+      <label>Схема<select id="invType"><option value="hf">Високочастотний (пуск ×2)</option><option value="lf">Низькочастотний, трансформаторний (пуск ×3)</option></select></label>
+      <label>Напруга системи (АКБ)<select id="sysV"><option value="auto">Авто</option><option value="12">12 В</option><option value="24">24 В</option><option value="48">48 В</option></select></label>
+      <label>Запас потужності, ×<input id="invReserve" type="number" inputmode="decimal" step="0.05" min="1" value="1.25"></label>
+      <label>ККД інвертора, %<input id="invEff" type="number" inputmode="numeric" min="50" max="99" value="90"></label>
+      <label>Власне споживання, Вт<input id="invIdle" type="number" inputmode="numeric" min="0" value="40"></label>
     </div>
   </div>
 
-  <!-- 3. Акумулятор -->
   <div class="card">
     <h2><span class="num">3</span>Акумулятор (збірка)</h2>
     <div class="grid">
@@ -145,132 +186,151 @@ button.x:hover{color:var(--bad)}
           <option value="custom">Свій елемент</option>
         </select>
       </label>
-      <label>Номінальна напруга елемента, В<input id="cellV" type="number" step="0.01"></label>
-      <label>Ємність елемента, А·год<input id="cellAh" type="number" step="0.1"></label>
-      <label>Макс. тривалий струм елемента, А<input id="cellI" type="number" step="0.1"></label>
-      <label>Мін. напруга (відсічка), В<input id="cellVmin" type="number" step="0.01"></label>
-      <label>Напруга під навантаженням, В<input id="cellVlow" type="number" step="0.01"></label>
-      <label>Макс. напруга (заряд), В<input id="cellVmax" type="number" step="0.01"></label>
-      <label>Глибина розряду (DoD), %<input id="dod" type="number" min="10" max="100"></label>
-      <label>Послідовно (S)
-        <select id="sMode"><option value="auto">Авто під напругу</option><option value="man">Вручну</option></select>
-      </label>
-      <label>S вручну<input id="sManual" type="number" min="1" value="16"></label>
-      <label>Де стоятиме батарея
-        <select id="temp"><option value="1">У теплі (+15…+30 °C)</option><option value="0.9">Прохолодно (+5…+15 °C)</option><option value="0.8">Близько 0 °C</option><option value="0.65">Мороз (−10 °C)</option></select>
-      </label>
-      <label>Запас на старіння, %<input id="aging" type="number" min="0" max="60" value="15"></label>
+      <label>Номінальна напруга елемента, В<input id="cellV" type="number" inputmode="decimal" step="0.01"></label>
+      <label>Ємність елемента, А·год<input id="cellAh" type="number" inputmode="decimal" step="0.1"></label>
+      <label>Макс. тривалий струм елемента, А<input id="cellI" type="number" inputmode="decimal" step="0.1"></label>
+      <label>Мін. напруга (відсічка), В<input id="cellVmin" type="number" inputmode="decimal" step="0.01"></label>
+      <label>Напруга під навантаженням, В<input id="cellVlow" type="number" inputmode="decimal" step="0.01"></label>
+      <label>Макс. напруга (заряд), В<input id="cellVmax" type="number" inputmode="decimal" step="0.01"></label>
+      <label>Глибина розряду (DoD), %<input id="dod" type="number" inputmode="numeric" min="10" max="100"></label>
+      <label>Послідовно (S)<select id="sMode"><option value="auto">Авто під напругу</option><option value="man">Вручну</option></select></label>
+      <label>S вручну<input id="sManual" type="number" inputmode="numeric" min="1" value="16"></label>
+      <label>Де стоятиме батарея<select id="temp"><option value="1">У теплі (+15…+30 °C)</option><option value="0.9">Прохолодно (+5…+15 °C)</option><option value="0.8">Близько 0 °C</option><option value="0.65">Мороз (−10 °C)</option></select></label>
+      <label>Запас на старіння, %<input id="aging" type="number" inputmode="numeric" min="0" max="60" value="15"></label>
     </div>
     <p class="hint" id="chemNote"></p>
   </div>
 
-  <!-- 4. Заряд і монтаж -->
   <div class="card">
     <h2><span class="num">4</span>Зарядка та монтаж</h2>
     <div class="grid">
-      <label>Світло між відключеннями, год<input id="gridH" type="number" min="0" step="0.5" value="4"></label>
-      <label>Струм заряду, А (порожньо = авто)<input id="chgA" type="number" min="0" placeholder="авто"></label>
-      <label>Довжина кабелю АКБ–інвертор (в один бік), м<input id="cableL" type="number" min="0.2" step="0.1" value="1.5"></label>
+      <label>Світло між відключеннями, год<input id="gridH" type="number" inputmode="decimal" min="0" step="0.5" value="4"></label>
+      <label>Струм заряду, А (порожньо = авто)<input id="chgA" type="number" inputmode="numeric" min="0" placeholder="авто"></label>
+      <label>Довжина кабелю АКБ–інвертор (в один бік), м<input id="cableL" type="number" inputmode="decimal" min="0.2" step="0.1" value="1.5"></label>
     </div>
   </div>
-
-  <!-- 5. Ціни -->
-  <div class="card">
-    <h2><span class="num">5</span>Ціни, грн</h2>
-    <div class="grid">
-      <label>Ціна 1 елемента<input id="priceCell" type="number" min="0"></label>
-      <label>BMS + балансир (порожньо = оцінка)<input id="priceBms" type="number" min="0"></label>
-      <label>Інвертор (порожньо = оцінка)<input id="priceInv" type="number" min="0"></label>
-      <label>Корпус, шини, кабель, запобіжник (порожньо = оцінка)<input id="priceMisc" type="number" min="0"></label>
-    </div>
-    <p class="hint">Оцінки цін — грубі орієнтири (листопад 2026), впишіть ціни з конкретних оголошень, і кошторис перерахується.</p>
-  </div>
-  <div class="row" style="margin-top:-4px"><button id="reset">Скинути все</button></div>
 </div>
 
-<!-- Результати -->
-<div class="res">
+<div>
   <div class="card">
     <h2>Результат</h2>
     <div class="kpis">
       <div class="kpi"><div class="t">Інвертор</div><div class="v" id="kInv">—</div><div class="d" id="kInvD"></div></div>
       <div class="kpi"><div class="t">Збірка акумулятора</div><div class="v" id="kPack">—</div><div class="d" id="kPackD"></div></div>
       <div class="kpi"><div class="t">Автономність</div><div class="v" id="kAut">—</div><div class="d" id="kAutD"></div></div>
-      <div class="kpi"><div class="t">Орієнтовна вартість</div><div class="v" id="kCost">—</div><div class="d" id="kCostD"></div></div>
+      <div class="kpi"><div class="t">Комплект (закупка)</div><div class="v" id="kCost">—</div><div class="d" id="kCostD"></div></div>
     </div>
     <svg id="packsvg" role="img" aria-label="Схема збірки"></svg>
   </div>
-
   <div class="card">
     <h2>Деталі розрахунку</h2>
     <table class="spec" id="spec"></table>
   </div>
-
   <div class="card">
     <h2>Зауваження</h2>
     <ul class="warns" id="warns"></ul>
   </div>
-
-  <div class="card">
-    <h2>Список покупок</h2>
-    <table class="shop"><thead><tr><th>Що купити</th><th class="r">К-сть</th><th class="r">Сума, грн</th></tr></thead><tbody id="shop"></tbody><tfoot><tr><td colspan="2">Разом</td><td class="r" id="shopTotal"></td></tr></tfoot></table>
-    <div class="row"><button class="pri" id="copy">Скопіювати розрахунок</button><button id="share" style="display:none">Поділитися…</button></div>
-  </div>
-
   <div class="card">
     <h2>Варіанти з іншою ємністю елемента</h2>
-    <table class="var"><thead><tr><th>Елемент</th><th>Схема</th><th>Шт.</th><th>кВт·год</th><th>Год</th><th>Комірки, грн</th></tr></thead><tbody id="vars"></tbody></table>
-    <p class="hint">Натисніть рядок, щоб перейти на цей варіант. Ціна в таблиці перерахована пропорційно ємності — це лише орієнтир.</p>
+    <table class="var"><thead><tr><th>Елемент</th><th>Схема</th><th>Шт.</th><th>кВт·год</th><th>Год</th><th>Елементи, грн</th></tr></thead><tbody id="vars"></tbody></table>
+    <p class="hint">Натисніть рядок, щоб перейти на цей варіант. Сума — за вашою ціною елемента, перерахованою пропорційно ємності.</p>
   </div>
 </div>
 </div>
+
+<div class="wide">
+  <div class="card" id="bomCard">
+    <h2><span class="num">5</span>Що купити — кошторис</h2>
+    <p class="hint" style="margin:0 0 6px">Кількості рахуються самі. Впишіть свою ціну за одиницю в кожен рядок. Назву й кількість можна змінити, непотрібне — зняти галочкою.</p>
+    <div class="tablewrap">
+    <table class="bom">
+      <thead><tr><th></th><th>Найменування</th><th>К-сть</th><th>Од.</th><th>Ціна за од., грн</th><th class="r">Сума, грн</th><th></th></tr></thead>
+      <tbody id="bomBody"></tbody>
+    </table>
+    </div>
+    <div class="missing" id="missing"></div>
+    <div class="row">
+      <button id="addItem">+ Своя позиція</button>
+      <button id="addSvc">+ Своя робота/послуга</button>
+      <button id="fillEst">Підставити орієнтовні ціни в порожні</button>
+      <button id="resetBom">Скинути назви й кількості</button>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <label>Націнка на матеріали для клієнта, %<input id="markup" type="number" inputmode="numeric" min="0" value="0"></label>
+    </div>
+    <div class="totals">
+      <div>Матеріали (закупка)<b id="tGoods">0</b></div>
+      <div>Роботи<b id="tSvc">0</b></div>
+      <div>Собівартість<b id="tCost">0</b></div>
+      <div>Прибуток<b id="tProfit">0</b></div>
+      <div class="main">Ціна для клієнта<b id="tClient">0</b></div>
+    </div>
+  </div>
+
+  <div class="docgrid">
+    <div class="card">
+      <h2><span class="num">6</span>Документ</h2>
+      <div class="seg" id="docSeg">
+        <button data-t="invoice">Рахунок</button><button data-t="offer">Комерційна пропозиція</button><button data-t="calc">Прорахунок для себе</button>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+        <label>Номер<input id="docNo"></label>
+        <label>Дата<input id="docDate" type="date"></label>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr;margin-top:10px">
+        <label>Постачальник (ПІБ / ФОП, телефон, реквізити)<textarea id="seller" placeholder="ФОП Іваненко І.І., тел. 0XX XXX XX XX"></textarea></label>
+        <label>Клієнт / покупець<textarea id="client" placeholder="ПІБ, телефон, адреса"></textarea></label>
+        <label>Примітка в документі<textarea id="docNote" placeholder="Напр.: Гарантія на збірку 12 міс. Термін виконання 3 дні. Ціни дійсні 3 дні."></textarea></label>
+      </div>
+      <div class="row">
+        <button class="pri" id="copyDoc">Скопіювати текстом</button>
+        <button id="shareDoc" style="display:none">Поділитися…</button>
+        <button id="pdfDoc" style="display:none">Зберегти PDF / друк</button>
+      </div>
+      <p class="hint" id="docHint"></p>
+    </div>
+    <div class="card">
+      <h2>Попередній перегляд</h2>
+      <div class="paper" id="doc"></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:0"><button id="reset">Скинути все</button></div>
+</div>
+
 <div class="mbar" id="mbar" title="До результату">
-  <div>Інвертор<b id="mInv">—</b></div><div>Збірка<b id="mPack">—</b></div><div>Автономно<b id="mAut">—</b></div><div>Ціна<b id="mCost">—</b></div>
+  <div>Інвертор<b id="mInv">—</b></div><div>Збірка<b id="mPack">—</b></div><div>Автономно<b id="mAut">—</b></div><div>Клієнту<b id="mCost">—</b></div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 const $=id=>document.getElementById(id);
 const fmt=(n,d=0)=>isFinite(n)?Number(n).toLocaleString('uk-UA',{maximumFractionDigits:d}):'∞';
+const money=n=>Number(Math.round(n)).toLocaleString('uk-UA');
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const ceil=Math.ceil;
+const APP=window.AndroidApp||null;
 
 const DEVICES=[
- ['Роутер + ONU/оптичний термінал',25,1,'',100,1],
- ['LED-лампа',10,4,'',100,1],
- ['Ноутбук',65,1,'',100,1],
- ['Стаціонарний ПК',300,1,'',100,1.5],
- ['Монітор',30,1,'',100,1],
- ['Телевізор',100,1,'',100,1],
- ['Зарядка телефонів',20,1,'',100,1],
- ['Холодильник',150,1,'',40,4],
- ['Морозильна камера',120,1,'',40,4],
- ['Газовий котел (з насосом)',120,1,'',100,2],
- ['Циркуляційний насос опалення',60,1,'',100,2],
- ['Свердловинний насос',750,1,'',15,3],
- ['Насосна станція',900,1,'',10,3],
- ['Пральна машина',500,1,'1',60,2],
- ['Мікрохвильова піч',1200,1,'0.3',100,1.5],
- ['Електрочайник',2000,1,'0.3',100,1],
- ['Кавоварка',1200,1,'0.2',100,1],
- ['Камери відеоспостереження',10,2,'',100,1],
- ['Вентилятор',50,1,'',100,2],
- ['Індукційна конфорка',1800,1,'1',60,1],
- ['Бойлер',1500,1,'1',100,1],
+ ['Роутер + ONU/оптичний термінал',25,1,'',100,1],['LED-лампа',10,4,'',100,1],['Ноутбук',65,1,'',100,1],['Стаціонарний ПК',300,1,'',100,1.5],
+ ['Монітор',30,1,'',100,1],['Телевізор',100,1,'',100,1],['Зарядка телефонів',20,1,'',100,1],['Холодильник',150,1,'',40,4],['Морозильна камера',120,1,'',40,4],
+ ['Газовий котел (з насосом)',120,1,'',100,2],['Циркуляційний насос опалення',60,1,'',100,2],['Свердловинний насос',750,1,'',15,3],['Насосна станція',900,1,'',10,3],
+ ['Пральна машина',500,1,'1',60,2],['Мікрохвильова піч',1200,1,'0.3',100,1.5],['Електрочайник',2000,1,'0.3',100,1],['Кавоварка',1200,1,'0.2',100,1],
+ ['Камери відеоспостереження',10,2,'',100,1],['Вентилятор',50,1,'',100,2],['Індукційна конфорка',1800,1,'1',60,1],['Бойлер',1500,1,'1',100,1],
  ['Електроінструмент (дриль, болгарка)',1000,1,'0.5',50,3],
 ];
 const DEFAULT_ROWS=[0,1,2,7,9,5].map(i=>{const d=DEVICES[i];return{name:d[0],p:d[1],qty:d[2],hrs:d[3],duty:d[4],surge:d[5],peak:true}});
 
 const CHEM={
- lfp:{v:3.2,vmin:2.8,vlow:3.0,vmax:3.6,ah:280,i:140,dod:90,price:3500,whkg:160,vars:[105,206,230,280,304,314],k:1.05,cr:[0.2,0.5],cycles:'3000–6000',bms:true,unit:'комірка',
-      name:a=>`LiFePO4 3.2 В ${a} А·год (Grade A)`,note:'LiFePO4: 3000–6000 циклів, безпечна хімія. Струм — беріть ~0.5C тривало (для 280 А·год ≈ 140 А). Не заряджати нижче 0 °C. Комірки підбирати однієї партії, стягувати пакет.'},
- nmc:{v:3.6,vmin:3.0,vlow:3.3,vmax:4.15,ah:3.0,i:10,dod:80,price:130,whkg:190,vars:[2.5,3.0,3.5,4.0,5.0],k:1.05,cr:[0.2,0.5],cycles:'500–1000',bms:true,unit:'банка',
-      name:a=>`Li-ion 18650/21700 ${a} А·год`,note:'Li-ion NMC: компактно, але 500–1000 циклів і вища пожежонебезпечність. Банки в паралельних групах — однакові, точкове зварювання нікелевою стрічкою, обов’язкова BMS.'},
- agm:{v:12,vmin:10.8,vlow:11.5,vmax:14.4,ah:100,i:25,dod:50,price:6500,whkg:33,vars:[65,100,150,200],k:1.3,cr:[0.1,0.2],cycles:'300–600',bms:false,unit:'АКБ',
-      name:a=>`АКБ AGM 12 В ${a} А·год`,note:'AGM: дешево на старті, але розряджати не глибше 50%, струм до 0.2C, 300–600 циклів. Реальна ємність при великому струмі нижча. АКБ у збірці — однакові, однієї дати.'},
- gel:{v:12,vmin:10.8,vlow:11.5,vmax:14.2,ah:100,i:25,dod:60,price:8500,whkg:33,vars:[65,100,150,200],k:1.3,cr:[0.1,0.2],cycles:'500–1000',bms:false,unit:'АКБ',
-      name:a=>`АКБ GEL 12 В ${a} А·год`,note:'GEL: краще за AGM переносить глибокий розряд, але не любить великі струми заряду (0.1–0.15C). Перевірте, що інвертор має профіль GEL.'},
+ lfp:{label:'LiFePO4',v:3.2,vmin:2.8,vlow:3.0,vmax:3.6,ah:280,i:140,dod:90,price:3500,whkg:160,vars:[105,206,230,280,304,314],k:1.05,cr:[0.2,0.5],cycles:'3000–6000',bms:true,unit:'комірка',
+      name:a=>`Комірка LiFePO4 3.2 В ${a} А·год (Grade A)`,note:'LiFePO4: 3000–6000 циклів, безпечна хімія. Струм — беріть ~0.5C тривало (для 280 А·год ≈ 140 А). Не заряджати нижче 0 °C. Комірки однієї партії, пакет стягувати.'},
+ nmc:{label:'Li-ion NMC',v:3.6,vmin:3.0,vlow:3.3,vmax:4.15,ah:3.0,i:10,dod:80,price:130,whkg:190,vars:[2.5,3.0,3.5,4.0,5.0],k:1.05,cr:[0.2,0.5],cycles:'500–1000',bms:true,unit:'банка',
+      name:a=>`Банка Li-ion 18650/21700 ${a} А·год`,note:'Li-ion NMC: компактно, але 500–1000 циклів і вища пожежонебезпечність. Банки в паралельних групах однакові, точкове зварювання, обов’язкова BMS.'},
+ agm:{label:'AGM',v:12,vmin:10.8,vlow:11.5,vmax:14.4,ah:100,i:25,dod:50,price:6500,whkg:33,vars:[65,100,150,200],k:1.3,cr:[0.1,0.2],cycles:'300–600',bms:false,unit:'АКБ',
+      name:a=>`Акумулятор AGM 12 В ${a} А·год`,note:'AGM: дешево на старті, але розряджати не глибше 50%, струм до 0.2C, 300–600 циклів. АКБ у збірці однакові, однієї дати.'},
+ gel:{label:'GEL',v:12,vmin:10.8,vlow:11.5,vmax:14.2,ah:100,i:25,dod:60,price:8500,whkg:33,vars:[65,100,150,200],k:1.3,cr:[0.1,0.2],cycles:'500–1000',bms:false,unit:'АКБ',
+      name:a=>`Акумулятор GEL 12 В ${a} А·год`,note:'GEL: краще за AGM переносить глибокий розряд, але не любить великі струми заряду (0.1–0.15C). Перевірте профіль GEL в інверторі.'},
 };
-CHEM.custom={...CHEM.lfp,name:a=>`Елемент ${a} А·год`,note:'Свій елемент: заповніть усі параметри з даташиту.',vars:null};
+CHEM.custom={...CHEM.lfp,label:'',name:a=>`Елемент ${a} А·год`,note:'Свій елемент: заповніть усі параметри з даташиту.',vars:null};
 
 const INV=[600,1000,1500,2000,3000,3600,4000,5000,6000,8000,10000,12000,16000];
 const INV_PRICE={600:3500,1000:5500,1500:7500,2000:9500,3000:14000,3600:17000,4000:20000,5000:30000,6000:38000,8000:55000,10000:65000,12000:80000,16000:110000};
@@ -280,72 +340,65 @@ const CABLE=[[6,40],[10,60],[16,80],[25,110],[35,140],[50,175],[70,220],[95,270]
 const WIN={12:[10,15.5],24:[20,31],48:[40,60]};
 
 let rows=JSON.parse(JSON.stringify(DEFAULT_ROWS));
-const FIELDS=['outH','invKind','invType','sysV','invReserve','invEff','invIdle','chem','cellV','cellAh','cellI','cellVmin','cellVlow','cellVmax','dod','sMode','sManual','temp','aging','gridH','chgA','cableL','priceCell','priceBms','priceInv','priceMisc'];
+let bom={};        // key -> {price,qty,name,on}
+let custom=[];     // {name,qty,unit,price,on,svc}
+let docType='invoice';
+let items=[];      // поточні авто-позиції
+let X={};          // поточний розрахунок
+
+const FIELDS=['outH','invKind','invType','sysV','invReserve','invEff','invIdle','chem','cellV','cellAh','cellI','cellVmin','cellVlow','cellVmax','dod','sMode','sManual','temp','aging','gridH','chgA','cableL','markup','docNo','docDate','seller','client','docNote'];
 const v=id=>{const x=parseFloat(String($(id).value).replace(',','.'));return isNaN(x)?null:x};
+const pnum=s=>{const x=parseFloat(String(s??'').replace(/\s/g,'').replace(',','.'));return isNaN(x)?null:x};
 
 function applyChem(c){
   const p=CHEM[c]; if(c==='custom')return;
-  $('cellV').value=p.v;$('cellAh').value=p.ah;$('cellI').value=p.i;$('cellVmin').value=p.vmin;$('cellVlow').value=p.vlow;$('cellVmax').value=p.vmax;$('dod').value=p.dod;$('priceCell').value=p.price;
+  $('cellV').value=p.v;$('cellAh').value=p.ah;$('cellI').value=p.i;$('cellVmin').value=p.vmin;$('cellVlow').value=p.vlow;$('cellVmax').value=p.vmax;$('dod').value=p.dod;
 }
 
+/* ---------- прилади ---------- */
 function renderRows(){
-  const tb=$('loadBody');tb.innerHTML='';
-  rows.forEach((r,i)=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td><input data-i="${i}" data-f="name" value="${String(r.name).replace(/"/g,'&quot;')}"></td>
+  $('loadBody').innerHTML=rows.map((r,i)=>`<tr><td><input data-i="${i}" data-f="name" value="${esc(r.name)}"></td>
     <td class="n" data-l="Вт"><input data-i="${i}" data-f="p" type="number" inputmode="decimal" min="0" value="${r.p}"></td>
     <td class="s" data-l="К-сть"><input data-i="${i}" data-f="qty" type="number" inputmode="numeric" min="0" value="${r.qty}"></td>
     <td class="s" data-l="Год"><input data-i="${i}" data-f="hrs" type="number" inputmode="decimal" min="0" step="0.1" value="${r.hrs}" placeholder="${v('outH')??''}"></td>
     <td class="s" data-l="Роб. %"><input data-i="${i}" data-f="duty" type="number" inputmode="numeric" min="0" max="100" value="${r.duty}"></td>
     <td class="s" data-l="Пуск ×"><input data-i="${i}" data-f="surge" type="number" inputmode="decimal" min="1" step="0.5" value="${r.surge}"></td>
-    <td class="pk" data-l="Пік" style="text-align:center" title="Враховувати в піковій потужності"><input data-i="${i}" data-f="peak" type="checkbox" ${r.peak?'checked':''}></td>
-    <td class="del"><button class="x" data-del="${i}" title="Видалити">×</button></td>`;
-    tb.appendChild(tr);
-  });
+    <td class="pk" data-l="Пік" style="text-align:center"><input data-i="${i}" data-f="peak" type="checkbox" ${r.peak?'checked':''}></td>
+    <td class="del"><button class="x" data-del="${i}" title="Видалити">×</button></td></tr>`).join('');
 }
-$('loadBody').addEventListener('input',e=>{
-  const t=e.target,i=t.dataset.i,f=t.dataset.f; if(i==null)return;
-  rows[i][f]=t.type==='checkbox'?t.checked:t.value; calc();
-});
-$('loadBody').addEventListener('change',e=>{const t=e.target;if(t.type==='checkbox'){rows[t.dataset.i].peak=t.checked;calc();}});
+$('loadBody').addEventListener('input',e=>{const t=e.target,i=t.dataset.i,f=t.dataset.f;if(i==null)return;rows[i][f]=t.type==='checkbox'?t.checked:t.value;calc();});
 $('loadBody').addEventListener('click',e=>{const d=e.target.dataset.del;if(d!=null){rows.splice(+d,1);renderRows();calc();}});
 $('addRow').onclick=()=>{rows.push({name:'Прилад',p:100,qty:1,hrs:'',duty:100,surge:1,peak:true});renderRows();calc();};
 DEVICES.forEach((d,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${d[0]} — ${d[1]} Вт`;$('preset').appendChild(o)});
 $('preset').onchange=e=>{const d=DEVICES[e.target.value];if(d){rows.push({name:d[0],p:d[1],qty:d[2],hrs:d[3],duty:d[4],surge:d[5],peak:true});renderRows();calc();}e.target.value='';};
 
 const pick=(arr,x)=>arr.find(s=>s>=x);
-const r100=x=>Math.round(x/100)*100;
-const r5=x=>Math.max(5,Math.round(x/5)*5);
+const r10=x=>Math.round(x/10)*10, r100=x=>Math.round(x/100)*100, r5=x=>Math.max(5,Math.round(x/5)*5);
 const h=x=>{if(!isFinite(x))return '∞';const hh=Math.floor(x),mm=Math.round((x-hh)*60);return mm===60?`${hh+1} год`:(mm?`${hh} год ${mm} хв`:`${hh} год`)};
 
-let last={};
+/* ---------- основний розрахунок ---------- */
 function calc(){
   const chemKey=$('chem').value, C=CHEM[chemKey];
   $('chemNote').textContent=C.note;
   $('sManual').disabled=$('sMode').value!=='man';
   const T=v('outH')||0;
-  // навантаження
   let Eac=0,Pc=0,maxExtra=0,motor=false,biggest='';
   rows.forEach(r=>{
-    const hrs=(r.hrs===''||r.hrs==null)?T:(+r.hrs||0);
-    const p=(+r.p||0)*(+r.qty||0);
+    const hrs=(r.hrs===''||r.hrs==null)?T:(+r.hrs||0), p=(+r.p||0)*(+r.qty||0);
     Eac+=p*hrs*((+r.duty||0)/100);
     if(r.peak){Pc+=p;const ex=((+r.surge||1)-1)*p;if(ex>maxExtra){maxExtra=ex;biggest=r.name}}
     if((+r.surge||1)>=3&&p>0)motor=true;
   });
   const Ps=Pc+maxExtra;
-  // інвертор
   const reserve=v('invReserve')||1.25, eff=(v('invEff')||90)/100, idle=v('invIdle')||0;
-  const type=$('invType').value, sf=type==='lf'?3:2;
+  const type=$('invType').value, kind=$('invKind').value, sf=type==='lf'?3:2;
   const needW=Math.max(Pc*reserve,Ps/sf);
   const invW=pick(INV,needW)||ceil(needW/1000)*1000;
   const V=$('sysV').value==='auto'?(invW<=1500?12:invW<=3600?24:48):+$('sysV').value;
-  // елемент
   const cV=v('cellV')||3.2,cAh=v('cellAh')||1,cI=v('cellI')||1,cVmin=v('cellVmin')||cV*0.85,cVlow=v('cellVlow')||cV*0.93,cVmax=v('cellVmax')||cV*1.13;
   const dod=(v('dod')||80)/100,tf=+$('temp').value,aging=(v('aging')||0)/100;
   const S=$('sMode').value==='man'?Math.max(1,Math.round(v('sManual')||1)):Math.max(1,Math.round(V*1.0667/cV));
   const Vn=S*cV,Vlow=S*cVlow,Vmin=S*cVmin,Vmax=S*cVmax;
-  // енергія
   const Edc=Eac/eff+idle*T, Pavg=T>0?Edc/T:0;
   const WhNeed=Edc*(1+aging)/(dod*tf), AhNeed=WhNeed/Vn;
   const Iload=Pc/eff/Vlow, Ipeak=Ps/eff/Vlow, Iinv=invW/eff/Vlow;
@@ -354,53 +407,36 @@ function calc(){
   const Ah=P*cAh, Wh=Vn*Ah, usable=Wh*dod*tf;
   const aut=Pavg>0?usable/Pavg:Infinity, autEol=Pavg>0?usable*(1-aging)/Pavg:Infinity;
   const kg=Wh/C.whkg;
-  // BMS, запобіжник, кабель
   const Ibms=pick(BMS_STD,Math.max(Iinv,Iload*1.25))||ceil(Iinv/50)*50;
   const fuse=pick(FUSE,Iinv*1.25)||ceil(Iinv*1.25/100)*100;
   const L=v('cableL')||1.5;
   const Sdrop=0.0175*2*L*Iinv/(0.02*Vn);
   let cab=CABLE.find(([s,a])=>a>=Iinv&&s>=Sdrop), cabPar=1;
   if(!cab){cabPar=2;cab=CABLE.find(([s,a])=>a*2>=Iinv&&s*2>=Sdrop)||CABLE[CABLE.length-1]}
-  // заряд
-  const cr=C.cr, gridH=v('gridH')||0;
-  const AhUsed=Edc/Vn;
-  const Ineed=gridH>0?AhUsed*C.k/gridH:0;
-  const Imax=Ah*cr[1];
+  const cr=C.cr, gridH=v('gridH')||0, AhUsed=Edc/Vn;
+  const Ineed=gridH>0?AhUsed*C.k/gridH:0, Imax=Ah*cr[1];
   const chgAuto=r5(Math.min(Imax,Math.max(Ah*cr[0],Ineed)));
-  const chgA=v('chgA')||chgAuto;
-  const tChg=AhUsed*C.k/chgA;
-  const Pchg=chgA*Vmax*0.97/0.92;
-  // ціни
-  const pCell=v('priceCell')||0;
-  const bmsAuto=C.bms?r100(1200+Ibms*18+S*60):0;
-  let invAuto=(INV_PRICE[invW]||invW*7)*($('invKind').value==='ups'?0.75:1)*(type==='lf'?1.3:1); invAuto=r100(invAuto);
-  const miscAuto=r100((C.bms?1500:500)+cab[0]*cabPar*2*L*7+600+(P>1&&!C.bms?300:0));
-  $('priceBms').placeholder=C.bms?`≈ ${fmt(bmsAuto)}`:'не потрібна';
-  $('priceInv').placeholder=`≈ ${fmt(invAuto)}`;
-  $('priceMisc').placeholder=`≈ ${fmt(miscAuto)}`;
+  const chgA=v('chgA')||chgAuto, tChg=AhUsed*C.k/chgA, Pchg=chgA*Vmax*0.97/0.92;
   $('chgA').placeholder=`авто: ${chgAuto} А`;
-  const cCells=N*pCell, cBms=C.bms?(v('priceBms')??bmsAuto):0, cInv=v('priceInv')??invAuto, cMisc=v('priceMisc')??miscAuto;
-  const total=cCells+cBms+cInv+cMisc;
 
-  // ===== Вивід
+  X={chemKey,C,T,Eac,Edc,Pc,Ps,biggest,needW,invW,V,type,kind,S,P,N,cV,cAh,cI,Vn,Vmin,Vmax,Ah,Wh,usable,aut,autEol,Pavg,AhNeed,WhNeed,Pcap,Pcur,
+     Iload,Ipeak,Iinv,Ibms,fuse,cab,cabPar,L,chgA,tChg,Pchg,kg,tf};
+
   $('kInv').textContent=`${fmt(invW)} Вт · ${V} В`;
   $('kInvD').textContent=`чиста синусоїда, пік ≥ ${fmt(Ps)} Вт`;
   $('kPack').textContent=`${S}S${P}P · ${fmt(N)} шт.`;
   $('kPackD').textContent=`${fmt(Vn,1)} В · ${fmt(Ah,1)} А·год · ${fmt(Wh/1000,2)} кВт·год`;
   $('kAut').textContent=h(aut);
   $('kAutD').textContent=`при середньому ${fmt(Pavg)} Вт; через роки ≈ ${h(autEol)}`;
-  $('kCost').textContent=`${fmt(total)} грн`;
   $('mInv').textContent=`${fmt(invW/1000,1)} кВт ${V}В`;
   $('mPack').textContent=`${S}S${P}P`;
   $('mAut').textContent=isFinite(aut)?`${fmt(aut,1)} год`:'∞';
-  $('mCost').textContent=total>=1000?`${fmt(total/1000,1)} тис`:fmt(total);
-  $('kCostD').textContent=`з них АКБ ${fmt(cCells+cBms+cMisc)} · інвертор ${fmt(cInv)}`;
 
   const spec=[
     ['Енергія за відключення (на розетках)',`${fmt(Eac)} Вт·год`],
     ['Енергія з батареї (з ККД і власним споживанням)',`${fmt(Edc)} Вт·год`],
     ['Пікова тривала потужність',`${fmt(Pc)} Вт`],
-    ['Пусковий пік'+(biggest?` (старт: ${biggest})`:''),`${fmt(Ps)} Вт`],
+    ['Пусковий пік'+(biggest?` (старт: ${esc(biggest)})`:''),`${fmt(Ps)} Вт`],
     ['Потрібна потужність інвертора',`${fmt(needW)} Вт → беремо ${fmt(invW)} Вт`],
     ['Напруга АКБ: номінал / мін / макс',`${fmt(Vn,1)} / ${fmt(Vmin,1)} / ${fmt(Vmax,1)} В`],
     ['Потрібна ємність (із запасами)',`${fmt(AhNeed,1)} А·год (${fmt(WhNeed)} Вт·год)`],
@@ -408,8 +444,8 @@ function calc(){
     ['Корисна енергія збірки',`${fmt(usable)} Вт·год`],
     ['Струм з АКБ: робочий / пусковий / макс. інвертора',`${fmt(Iload)} / ${fmt(Ipeak)} / ${fmt(Iinv)} А`],
     ...(C.bms?[['BMS',`${S}S, ≥ ${Ibms} А тривало`]]:[]),
-    ['Запобіжник біля АКБ',`${fuse} А (ANL/MEGA/NH)`],
-    ['Кабель АКБ–інвертор (мідь, гнучкий)',`${cabPar>1?cabPar+' × ':''}${cab[0]} мм² на кожну жилу, ${fmt(L,1)} м`],
+    ['Запобіжник біля АКБ',`${fuse} А`],
+    ['Кабель АКБ–інвертор (мідь, гнучкий)',`${cabPar>1?cabPar+' × ':''}${cab[0]} мм², ${fmt(L,1)} м в один бік`],
     ['Струм заряду',`${fmt(chgA)} А (≈ ${fmt(Pchg)} Вт з мережі)`],
     ['Час дозаряду після відключення',h(tChg)],
     ['Орієнтовна вага елементів',`≈ ${fmt(kg)} кг`],
@@ -417,120 +453,313 @@ function calc(){
   ];
   $('spec').innerHTML=spec.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('');
 
-  // зауваження
   const W=[];
   if(Pc===0)W.push(['bad','Додайте прилади з потужністю та кількістю.']);
   if(T<=0)W.push(['bad','Вкажіть тривалість відключення.']);
   const win=WIN[V];
   if(win){
     if(Vmax>win[1]+0.05)W.push(['bad',`Макс. напруга збірки ${fmt(Vmax,1)} В вища за межу ${V}-вольтового інвертора (~${win[1]} В). Зменште S.`]);
-    if(Vmin<win[0]-0.05)W.push(['', `Мін. напруга збірки ${fmt(Vmin,1)} В нижча за відсічку інвертора (~${win[0]} В) — частина ємності не використається. Збільште S або підніміть відсічку в BMS.`]);
+    if(Vmin<win[0]-0.05)W.push(['',`Мін. напруга збірки ${fmt(Vmin,1)} В нижча за відсічку інвертора (~${win[0]} В) — частина ємності не використається.`]);
   }
   if(V===12&&Iinv>150)W.push(['',`На 12 В струм ${fmt(Iinv)} А — товсті кабелі й великі втрати. Для такої потужності краще 24 або 48 В.`]);
   if(V===24&&invW>4000)W.push(['','Для понад 4 кВт зручніше 48 В: менші струми, дешевші BMS і кабелі.']);
-  if(needW>16000)W.push(['bad','Потрібно понад 16 кВт — розгляньте кілька інверторів у паралель або трифазну систему.']);
-  if(motor&&type==='hf')W.push(['','Є двигуни з великим пуском (насос, холодильник, інструмент). Низькочастотний (трансформаторний) інвертор переносить пуски краще.']);
-  if(Pcur>Pcap)W.push(['',`Кількість паралельних груп визначає струм, а не ємність: елементи ${cAh} А·год не тягнуть ${fmt(Iload)} А. Візьміть потужніші елементи або підніміть напругу системи.`]);
-  if(chemKey==='lfp'&&P>1)W.push(['',`${P} комірки в паралель — можна, але простіше взяти більші комірки (304–314 А·год) або зібрати ${P} окремі батареї ${S}S з власними BMS і з’єднати їх паралельно.`]);
+  if(needW>16000)W.push(['bad','Потрібно понад 16 кВт — кілька інверторів у паралель або трифазна система.']);
+  if(motor&&type==='hf')W.push(['','Є двигуни з великим пуском (насос, холодильник, інструмент). Низькочастотний інвертор переносить пуски краще.']);
+  if(Pcur>Pcap)W.push(['',`Паралельних груп стільки через струм, а не ємність: елементи ${cAh} А·год не тягнуть ${fmt(Iload)} А.`]);
+  if(chemKey==='lfp'&&P>1)W.push(['',`${P} комірки в паралель — можна, але простіше взяти більші комірки (304–314 А·год) або ${P} окремі батареї ${S}S з власними BMS.`]);
   if(!C.bms&&P>2)W.push(['',`${P} паралельні ланцюги свинцевих АКБ розряджаються нерівномірно. Краще менше АКБ більшої ємності.`]);
-  if(!C.bms&&Iload>P*cI)W.push(['bad','Струм розряду перевищує 0.2C для свинцю — реальна ємність буде помітно меншою, АКБ швидко деградують.']);
-  if(chemKey==='nmc'&&V===12)W.push(['bad','Li-ion NMC погано лягає на 12 В: 3S розряджається до 9 В, а 4S заряджається до 16.8 В. Використайте 24 В (7S) або 48 В (14S).']);
-  if(gridH>0&&tChg>gridH)W.push(['bad',`Не встигне зарядитися за ${h(gridH)} світла: потрібно ${h(tChg)}. Потрібен струм заряду ≈ ${fmt(ceil(Ineed))} А${Ineed>Imax?' — це більше, ніж батарея приймає, тож збільште ємність':''}.`]);
-  if(chgA>Imax*1.01)W.push(['bad',`Струм заряду ${fmt(chgA)} А більший за допустимий для цієї збірки (≈ ${fmt(Imax)} А).`]);
-  if((chemKey==='lfp'||chemKey==='nmc')&&tf<=0.8)W.push(['bad','Літієві елементи не можна заряджати нижче 0 °C. Потрібен підігрів або BMS із забороною заряду на морозі.']);
+  if(!C.bms&&Iload>P*cI)W.push(['bad','Струм розряду більший за 0.2C для свинцю — реальна ємність буде меншою, АКБ швидко деградують.']);
+  if(chemKey==='nmc'&&V===12)W.push(['bad','Li-ion NMC погано лягає на 12 В. Використайте 24 В (7S) або 48 В (14S).']);
+  if(gridH>0&&tChg>gridH)W.push(['bad',`Не встигне зарядитися за ${h(gridH)} світла: потрібно ${h(tChg)}. Потрібен струм заряду ≈ ${fmt(ceil(Ineed))} А${Ineed>Imax?' — більше, ніж батарея приймає, збільште ємність':''}.`]);
+  if(chgA>Imax*1.01)W.push(['bad',`Струм заряду ${fmt(chgA)} А більший за допустимий для збірки (≈ ${fmt(Imax)} А).`]);
+  if((chemKey==='lfp'||chemKey==='nmc')&&tf<=0.8)W.push(['bad','Літій не можна заряджати нижче 0 °C — потрібен підігрів (додано в кошторис) або BMS із забороною заряду на морозі.']);
   if(Pchg+Pc>3500)W.push(['',`Під час заряду з мережі береться ≈ ${fmt(Pchg+Pc)} Вт (заряд + прилади). Перевірте автомат і проводку на вводі.`]);
-  if(C.bms)W.push(['ok',`BMS візьміть з активним балансиром і зв’язком CAN/RS485, сумісним з інвертором. Запобіжник ставте якомога ближче до плюсової клеми.`]);
   if(!W.some(w=>w[0]==='bad'))W.push(['ok','Критичних проблем не знайдено.']);
   $('warns').innerHTML=W.map(([c,t])=>`<li class="${c}">${t}</li>`).join('');
+  X.W=W;
 
-  // покупки
-  const invName=`Інвертор ${$('invKind').value==='hybrid'?'гібридний':'з зарядкою (ДБЖ)'}, ${type==='lf'?'низькочастотний, ':''}чиста синусоїда, ${fmt(invW)} Вт, АКБ ${V} В, пік ≥ ${fmt(Ps)} Вт, заряд ≥ ${fmt(chgA)} А, перемикання ≤ 10 мс`;
-  const shop=[
-    [`${C.name(cAh)}`+(C.bms?'':` — однакові, однієї дати`),`${fmt(N)} шт.`,cCells],
-    ...(C.bms?[[`BMS ${S}S ${Ibms} А + активний балансир, CAN/RS485`,'1',cBms]]:[]),
-    [invName,'1',cInv],
-    [`Запобіжник ${fuse} А + кабель ${cabPar>1?cabPar+'×':''}${cab[0]} мм² (${fmt(2*L*cabPar,1)} м), наконечники, ${C.bms?'шини, корпус/стяжка пакета':'перемички між АКБ'}`,'компл.',cMisc],
-  ];
-  $('shop').innerHTML=shop.map(([a,b,c])=>`<tr><td>${a}</td><td class="r">${b}</td><td class="r">${fmt(c)}</td></tr>`).join('');
-  $('shopTotal').textContent=fmt(total);
-
-  // варіанти
-  const vars=C.vars||[cAh];
-  $('vars').innerHTML=vars.map(a=>{
-    const iA=cI*a/cAh, Pv=Math.max(1,ceil(AhNeed/a-1e-9),ceil(Iload/iA-1e-9)), Nv=S*Pv, kWh=Vn*Pv*a/1000;
-    const autv=Pavg>0?kWh*1000*dod*tf/Pavg:Infinity, cost=Nv*pCell*a/cAh;
-    return `<tr data-ah="${a}" class="${a==cAh?'sel':''}"><td>${a} А·год</td><td>${S}S${Pv}P</td><td>${Nv}</td><td>${fmt(kWh,2)}</td><td>${fmt(autv,1)}</td><td>${fmt(r100(cost))}</td></tr>`;
-  }).join('');
-
+  items=buildBom(X);
   drawPack(S,P,C.unit,cAh,cV);
-  last={T,Eac,Edc,Pc,Ps,invW,V,S,P,N,Vn,Ah,Wh,usable,aut,Ibms,fuse,cab,cabPar,L,chgA,tChg,total,cCells,cBms,cInv,cMisc,shop,C,cAh,chemKey,W};
+  renderBom();
+  updateTotals();
+}
+
+/* ---------- кошторис ---------- */
+function buildBom(x){
+  const {C,chemKey,S,P,N,cAh,Ibms,fuse,cab,cabPar,L,invW,V,Ps,chgA,type,kind,tf}=x;
+  const lith=C.bms, mm=cab[0], out=[];
+  const add=(key,grp,name,qty,unit,est,on=true,svc=false)=>out.push({key,grp,name,qty,unit,est:r10(est),on,svc});
+  const cellEst=chemKey==='custom'?C.price:C.price*(cAh/C.ah);
+  add('cell','bat',C.name(cAh),N,'шт',cellEst);
+  if(lith){
+    add('bms','bat',`BMS ${S}S ${Ibms} А (зв'язок з інвертором CAN/RS485)`,1,'шт',1200+Ibms*18+S*60);
+    add('balancer','bat',`Активний балансир ${S}S 1–2 А (якщо немає в BMS)`,1,'шт',1800,false);
+    add('busbar','bat','Шини / перемички між комірками',Math.max(1,N-1),'шт',60);
+    add('case','bat',`Корпус / бокс для збірки ${S}S${P}P (стяжка, ізоляція)`,1,'шт',1000+N*150);
+    if(chemKey==='nmc')add('nickel','bat','Нікелева стрічка, ізоляційні кільця, тримачі банок',1,'компл',600+N*4);
+    add('heater','bat','Підігрів батареї (плівкові нагрівачі + термостат)',1,'компл',1200,tf<=0.8);
+  }else{
+    add('busbar','bat','Перемички між АКБ',Math.max(1,N-1),'шт',150);
+    add('case','bat','Стелаж / полиця для АКБ',1,'шт',1500,false);
+  }
+  const len=Math.ceil(L*cabPar*2)/2;
+  add('cableR','mnt',`Кабель силовий мідний ${mm} мм², червоний (+)`,len,'м',mm*7);
+  add('cableB','mnt',`Кабель силовий мідний ${mm} мм², чорний (−)`,len,'м',mm*7);
+  add('lugs','mnt',`Наконечники кабельні мідні ${mm} мм²`,4*cabPar,'шт',30+mm*1.5);
+  add('fuse','mnt',`Запобіжник ${fuse} А (ANL/MEGA) з тримачем`,1,'компл',300+fuse*2);
+  add('dcbreaker','mnt',`Автомат / роз'єднувач DC ${fuse} А`,1,'шт',600+fuse*4,false);
+  add('monitor','mnt','Шунт / монітор заряду АКБ',1,'шт',1500,false);
+  add('misc','mnt','Дрібниці: термоусадка, кріплення, стяжки, ізострічка',1,'компл',500);
+  add('acwiring','mnt','Електромонтаж AC: автомати, кабель, розетки',1,'компл',2500,false);
+  const invName=`Інвертор ${kind==='hybrid'?'гібридний':'з зарядкою (ДБЖ)'}${type==='lf'?' низькочастотний':''}, ${fmt(invW)} Вт, ${V} В, чиста синусоїда`;
+  let invEst=(INV_PRICE[invW]||invW*7)*(kind==='ups'?0.75:1)*(type==='lf'?1.3:1);
+  add('inverter','inv',invName,1,'шт',invEst);
+  add('workBat','svc',lith?'Робота: збірка акумулятора, налаштування BMS':'Робота: збірка батареї АКБ',1,'посл.',lith?1500+N*50:500,true,true);
+  add('workInst','svc','Робота: монтаж і налаштування інвертора',1,'посл.',2000,false,true);
+  add('delivery','svc','Доставка / виїзд',1,'посл.',500,false,true);
+  return out;
+}
+const GRP={inv:'Інвертор',bat:'Акумулятор',mnt:'Монтажні матеріали',svc:'Роботи та послуги'};
+
+function effItems(){
+  // повертає всі позиції з урахуванням правок користувача
+  const a=items.map(it=>{
+    const s=bom[it.key]||{};
+    const qty=pnum(s.qty)??it.qty, price=pnum(s.price);
+    return {...it,id:it.key,name:s.name||it.name,qty,price,on:s.on==null?it.on:s.on,auto:true};
+  });
+  custom.forEach((c,i)=>a.push({id:'_c'+i,grp:c.svc?'svc':'own',name:c.name,qty:pnum(c.qty)??0,unit:c.unit||(c.svc?'посл.':'шт'),price:pnum(c.price),est:null,on:c.on!==false,svc:!!c.svc,auto:false,ci:i}));
+  return a;
+}
+function renderBom(){
+  const all=effItems();
+  const order=['inv','bat','mnt','own','svc'], names={...GRP,own:'Інше'};
+  let html='';
+  order.forEach(g=>{
+    const list=all.filter(x=>x.grp===g); if(!list.length)return;
+    html+=`<tr class="grp"><td colspan="7">${names[g]}</td></tr>`;
+    list.forEach(x=>{
+      const k=x.id;
+      const autoQty=x.auto?items.find(i=>i.key===k).qty:null;
+      html+=`<tr data-k="${k}" class="${x.on?'':'off'} ${x.on&&x.price==null?'noprice':''}">
+        <td class="ck"><input type="checkbox" data-k="${k}" data-f="on" ${x.on?'checked':''} title="Включити в кошторис"></td>
+        <td class="nm"><input data-k="${k}" data-f="name" value="${esc(x.name)}"></td>
+        <td class="q" data-l="К-сть, ${esc(x.unit)}"><input data-k="${k}" data-f="qty" type="number" inputmode="decimal" min="0" step="any" value="${x.qty}" ${autoQty!=null?`placeholder="${autoQty}"`:''}></td>
+        <td class="u">${esc(x.unit)}</td>
+        <td class="p" data-l="Ціна, грн"><input data-k="${k}" data-f="price" type="number" inputmode="decimal" min="0" step="any" value="${x.price??''}" placeholder="${x.est!=null?'≈ '+money(x.est):'ціна'}"></td>
+        <td class="sum" id="sum-${k}">0</td>
+        <td class="dx">${x.auto?'':`<button class="x" data-delc="${x.ci}" title="Видалити">×</button>`}</td></tr>`;
+    });
+  });
+  $('bomBody').innerHTML=html;
+}
+function setItem(k,f,val){
+  if(k.startsWith('_c')){const c=custom[+k.slice(2)];if(c)c[f]=val;return}
+  const it=items.find(i=>i.key===k); bom[k]=bom[k]||{};
+  if(f==='name')bom[k].name=(val===it.name||val==='')?null:val;
+  else if(f==='qty')bom[k].qty=(val===''||pnum(val)===it.qty)?null:val;
+  else bom[k][f]=val;
+}
+$('bomBody').addEventListener('input',e=>{
+  const t=e.target,k=t.dataset.k,f=t.dataset.f; if(!k)return;
+  setItem(k,f,t.type==='checkbox'?t.checked:t.value);
+  const tr=t.closest('tr');
+  if(f==='on')tr.classList.toggle('off',!t.checked);
+  updateTotals();
+});
+$('bomBody').addEventListener('click',e=>{const d=e.target.dataset.delc;if(d!=null){custom.splice(+d,1);renderBom();updateTotals();}});
+$('addItem').onclick=()=>{custom.push({name:'Нова позиція',qty:1,unit:'шт',price:'',on:true,svc:false});renderBom();updateTotals();focusLast()};
+$('addSvc').onclick=()=>{custom.push({name:'Робота: ',qty:1,unit:'посл.',price:'',on:true,svc:true});renderBom();updateTotals();focusLast(true)};
+function focusLast(svc){const k='_c'+(custom.length-1);const el=document.querySelector(`#bomBody input[data-k="${k}"][data-f="name"]`);if(el){el.focus();el.select()}}
+$('fillEst').onclick=()=>{
+  let n=0; effItems().forEach(x=>{if(x.auto&&x.on&&x.price==null&&x.est!=null){bom[x.id]=bom[x.id]||{};bom[x.id].price=String(x.est);n++}});
+  renderBom();updateTotals();toast(n?`Підставлено цін: ${n}`:'Порожніх цін немає');
+};
+$('resetBom').onclick=()=>{Object.values(bom).forEach(s=>{s.name=null;s.qty=null});renderBom();updateTotals();toast('Назви й кількості — автоматичні')};
+
+function totals(){
+  const m=(v('markup')||0)/100;
+  const all=effItems().filter(x=>x.on);
+  let goods=0,svc=0,missing=0;
+  all.forEach(x=>{const s=(x.price||0)*x.qty;if(x.price==null)missing++;if(x.svc)svc+=s;else goods+=s});
+  const client=goods*(1+m)+svc;
+  return {all,goods,svc,cost:goods+svc,client,profit:client-(goods+svc),missing,m};
+}
+function updateTotals(){
+  effItems().forEach(x=>{
+    const el=$('sum-'+x.id); if(!el)return;
+    el.textContent=money((x.price||0)*x.qty);
+    el.closest('tr').classList.toggle('noprice',x.on&&x.price==null);
+  });
+  const t=totals();
+  $('tGoods').textContent=money(t.goods);$('tSvc').textContent=money(t.svc);$('tCost').textContent=money(t.cost);
+  $('tProfit').textContent=money(t.profit);$('tClient').textContent=money(t.client)+' грн';
+  $('missing').textContent=t.missing?`Не вказано ціну в ${t.missing} ${t.missing===1?'позиції':'позиціях'} (підсвічено) — вони рахуються як 0.`:'';
+  $('kCost').textContent=`${money(t.cost)} грн`;
+  $('kCostD').textContent=t.missing?`без ціни: ${t.missing} поз. · клієнту ${money(t.client)}`:`клієнту ${money(t.client)} грн`;
+  $('mCost').textContent=t.client>=1000?`${fmt(t.client/1000,1)} тис`:money(t.client);
+  renderVars();
+  renderDoc(t);
   save();
 }
 
+/* ---------- варіанти ---------- */
+function renderVars(){
+  const x=X; if(!x.C)return;
+  const s=bom.cell||{}; const cellItem=items.find(i=>i.key==='cell');
+  const pCell=pnum(s.price)??(cellItem?cellItem.est:0);
+  const vars=x.C.vars||[x.cAh];
+  const dod=(v('dod')||80)/100;
+  $('vars').innerHTML=vars.map(a=>{
+    const iA=x.cI*a/x.cAh, Pv=Math.max(1,ceil(x.AhNeed/a-1e-9),ceil(x.Iload/iA-1e-9)), Nv=x.S*Pv, kWh=x.Vn*Pv*a/1000;
+    const autv=x.Pavg>0?kWh*1000*dod*x.tf/x.Pavg:Infinity, cost=Nv*pCell*a/x.cAh;
+    return `<tr data-ah="${a}" class="${a==x.cAh?'sel':''}"><td>${a} А·год</td><td>${x.S}S${Pv}P</td><td>${Nv}</td><td>${fmt(kWh,2)}</td><td>${fmt(autv,1)}</td><td>${money(r100(cost))}</td></tr>`;
+  }).join('');
+}
 $('vars').addEventListener('click',e=>{
   const tr=e.target.closest('tr');if(!tr)return;const a=+tr.dataset.ah, cAh=v('cellAh');if(!a||a===cAh)return;
   $('cellI').value=Math.round((v('cellI')||1)*a/cAh*10)/10;
-  $('priceCell').value=Math.round((v('priceCell')||0)*a/cAh/10)*10;
+  if(bom.cell&&pnum(bom.cell.price)!=null)bom.cell.price=String(r10(pnum(bom.cell.price)*a/cAh));
+  if(bom.cell)bom.cell.name=null;
   $('cellAh').value=a;calc();
 });
 
+/* ---------- документ ---------- */
+function words(n){
+  n=Math.floor(Math.abs(n));
+  const ones=['','один','два','три','чотири','п’ять','шість','сім','вісім','дев’ять'],onesF=['','одна','дві','три','чотири','п’ять','шість','сім','вісім','дев’ять'];
+  const teens=['десять','одинадцять','дванадцять','тринадцять','чотирнадцять','п’ятнадцять','шістнадцять','сімнадцять','вісімнадцять','дев’ятнадцять'];
+  const tens=['','','двадцять','тридцять','сорок','п’ятдесят','шістдесят','сімдесят','вісімдесят','дев’яносто'];
+  const hund=['','сто','двісті','триста','чотириста','п’ятсот','шістсот','сімсот','вісімсот','дев’ятсот'];
+  const form=(n,[a,b,c])=>{const t=n%100,u=n%10;if(t>10&&t<20)return c;if(u===1)return a;if(u>=2&&u<=4)return b;return c};
+  const tri=(n,fem)=>{const r=[hund[Math.floor(n/100)]];const t=n%100;if(t>=10&&t<20)r.push(teens[t-10]);else{r.push(tens[Math.floor(t/10)]);r.push((fem?onesF:ones)[t%10])}return r.filter(Boolean).join(' ')};
+  if(n===0)return 'Нуль гривень 00 копійок';
+  const parts=[],mln=Math.floor(n/1e6)%1000,th=Math.floor(n/1000)%1000,rest=n%1000;
+  if(mln)parts.push(tri(mln,false)+' '+form(mln,['мільйон','мільйони','мільйонів']));
+  if(th)parts.push(tri(th,true)+' '+form(th,['тисяча','тисячі','тисяч']));
+  if(rest)parts.push(tri(rest,true));
+  const s=parts.join(' ')+' '+form(n,['гривня','гривні','гривень'])+' 00 копійок';
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+const TITLES={invoice:'Рахунок на оплату',offer:'Комерційна пропозиція',calc:'Прорахунок системи безперебійного живлення'};
+function docDateStr(){const d=$('docDate').value;if(!d)return '';const [y,m,dd]=d.split('-');return `${dd}.${m}.${y}`}
+function subjectLine(){
+  const x=X; if(!x.C)return '';
+  const chem=x.C.label?x.C.label+' ':'';
+  return `Система безперебійного живлення: інвертор ${fmt(x.invW/1000,1)} кВт (${x.V} В), акумулятор ${chem}${fmt(x.Vn,1)} В ${fmt(x.Ah,0)} А·год (${fmt(x.Wh/1000,1)} кВт·год), автономність ≈ ${h(x.aut)} при навантаженні ${fmt(x.Pavg)} Вт у середньому.`;
+}
+function docLines(t){
+  const client=docType!=='calc';
+  return t.all.map(x=>{
+    const price=client&&!x.svc?Math.round((x.price||0)*(1+t.m)):(x.price||0);
+    return {name:x.name,qty:x.qty,unit:x.unit,price,sum:price*x.qty,svc:x.svc,cost:(x.price||0)*x.qty};
+  });
+}
+function renderDoc(t){
+  if(!X.C)return;
+  const L=docLines(t), isCalc=docType==='calc';
+  const total=L.reduce((s,l)=>s+l.sum,0);
+  const no=$('docNo').value.trim(), date=docDateStr();
+  const seller=$('seller').value.trim(), client=$('client').value.trim(), note=$('docNote').value.trim();
+  let h1=`<h3>${TITLES[docType]}${no&&!isCalc?` № ${esc(no)}`:''}</h3><div class="sub">${date?'від '+date:''}</div>`;
+  let parties='';
+  if(seller)parties+=`<div>${docType==='invoice'?'Постачальник':'Виконавець'}:</div><div>${esc(seller).replace(/\n/g,'<br>')}</div>`;
+  if(client)parties+=`<div>${docType==='invoice'?'Покупець':'Замовник'}:</div><div>${esc(client).replace(/\n/g,'<br>')}</div>`;
+  let rowsH=L.map((l,i)=>`<tr><td class="c">${i+1}</td><td>${esc(l.name)}</td><td class="r">${fmt(l.qty,2)}</td><td class="c">${esc(l.unit)}</td><td class="r">${money(l.price)}</td><td class="r">${money(l.sum)}</td></tr>`).join('');
+  let html=h1+(parties?`<div class="parties">${parties}</div>`:'')+`<p class="subject">${esc(subjectLine())}</p>`+
+    `<table><thead><tr><th>№</th><th>Найменування</th><th class="r">К-сть</th><th>Од.</th><th class="r">Ціна${isCalc?' закупки':''}, грн</th><th class="r">Сума, грн</th></tr></thead><tbody>${rowsH||'<tr><td colspan="6" class="c">Немає позицій</td></tr>'}</tbody></table>`;
+  if(isCalc){
+    html+=`<p class="tot">Матеріали: ${money(t.goods)} грн</p><p class="tot">Роботи: ${money(t.svc)} грн</p><p class="tot"><b>Собівартість: ${money(t.cost)} грн</b></p>`+
+      `<p class="tot">Націнка на матеріали ${fmt(t.m*100,1)}%: ${money(t.goods*t.m)} грн</p><p class="tot"><b>Ціна для клієнта: ${money(t.client)} грн</b></p><p class="tot">Прибуток: ${money(t.profit)} грн</p>`;
+    const x=X;
+    const tech=[['Енергія за відключення',`${fmt(x.Eac)} Вт·год (з АКБ ${fmt(x.Edc)} Вт·год)`],['Потужність тривала / пускова',`${fmt(x.Pc)} / ${fmt(x.Ps)} Вт`],
+      ['Збірка',`${x.S}S${x.P}P, ${x.N} шт., ${fmt(x.Vn,1)} В, ${fmt(x.Ah,1)} А·год, ${fmt(x.Wh/1000,2)} кВт·год`],
+      ['Струм робочий / макс. інвертора',`${fmt(x.Iload)} / ${fmt(x.Iinv)} А`],...(x.C.bms?[['BMS',`${x.S}S ≥ ${x.Ibms} А`]]:[]),
+      ['Запобіжник / кабель',`${x.fuse} А / ${x.cabPar>1?x.cabPar+'×':''}${x.cab[0]} мм²`],['Заряд',`${fmt(x.chgA)} А, дозаряд ≈ ${h(x.tChg)}`]];
+    html+=`<table class="tech"><tbody>${tech.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</tbody></table>`;
+  }else{
+    html+=`<p class="tot"><b>Разом: ${money(total)} грн</b></p>`;
+    if(docType==='invoice')html+=`<p class="words">Сума до сплати: ${words(total)}.</p>`;
+  }
+  if(note)html+=`<div class="note">${esc(note)}</div>`;
+  if(docType==='invoice')html+=`<div class="sign"><div>Постачальник</div><div>Покупець</div></div>`;
+  $('doc').innerHTML=html;
+  $('docHint').textContent=t.missing?`Увага: у ${t.missing} позиціях не вказана ціна — у документі там 0.`:(docType==='calc'?'Прорахунок — для вас: ціни закупки, націнка й прибуток.':'Ціни матеріалів у документі — з націнкою; роботи — як вказали.');
+}
+function docText(){
+  const t=totals(), L=docLines(t), isCalc=docType==='calc', total=L.reduce((s,l)=>s+l.sum,0);
+  const no=$('docNo').value.trim(), date=docDateStr(), seller=$('seller').value.trim(), client=$('client').value.trim(), note=$('docNote').value.trim();
+  const out=[`${TITLES[docType].toUpperCase()}${no&&!isCalc?' № '+no:''}${date?' від '+date:''}`];
+  if(seller)out.push(`${docType==='invoice'?'Постачальник':'Виконавець'}: ${seller.replace(/\n/g,', ')}`);
+  if(client)out.push(`${docType==='invoice'?'Покупець':'Замовник'}: ${client.replace(/\n/g,', ')}`);
+  out.push('',subjectLine(),'');
+  L.forEach((l,i)=>out.push(`${i+1}. ${l.name} — ${fmt(l.qty,2)} ${l.unit} × ${money(l.price)} = ${money(l.sum)} грн`));
+  out.push('');
+  if(isCalc){
+    out.push(`Матеріали: ${money(t.goods)} грн`,`Роботи: ${money(t.svc)} грн`,`Собівартість: ${money(t.cost)} грн`,`Націнка ${fmt(t.m*100,1)}%: ${money(t.goods*t.m)} грн`,`Ціна для клієнта: ${money(t.client)} грн`,`Прибуток: ${money(t.profit)} грн`);
+    const x=X; out.push('',`Збірка ${x.S}S${x.P}P (${x.N} шт.), BMS ${x.C.bms?x.S+'S ≥ '+x.Ibms+' А':'—'}, запобіжник ${x.fuse} А, кабель ${x.cabPar>1?x.cabPar+'×':''}${x.cab[0]} мм², заряд ${fmt(x.chgA)} А.`);
+  }else{
+    out.push(`РАЗОМ: ${money(total)} грн`);
+    if(docType==='invoice')out.push(`Сума до сплати: ${words(total)}.`);
+  }
+  if(note)out.push('',note);
+  return out.join('\n');
+}
+function setDocType(t){docType=t;document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));updateTotals()}
+$('docSeg').addEventListener('click',e=>{const t=e.target.dataset.t;if(t)setDocType(t)});
+
+/* ---------- схема ---------- */
 function drawPack(S,P,unit,ah,cv){
   const svg=$('packsvg'),N=S*P;
-  if(N>240||N<1){svg.setAttribute('viewBox','0 0 600 30');svg.innerHTML=`<text x="0" y="20" font-size="13" fill="currentColor" opacity=".6">${N} елементів — схема не малюється, ${S} послідовно × ${P} паралельно</text>`;return}
-  const W=600,gap=3,cw=Math.min(34,(W-20-(S-1)*gap)/S),ch=Math.min(46,cw*1.5),rows=P;
-  const H=rows*(ch+gap)+34, x0=(W-(S*cw+(S-1)*gap))/2;
+  if(N>240||N<1){svg.setAttribute('viewBox','0 0 600 30');svg.innerHTML=`<text x="0" y="20" font-size="13" fill="currentColor" opacity=".6">${N} елементів: ${S} послідовно × ${P} паралельно</text>`;return}
+  const W=600,gap=3,cw=Math.min(34,(W-20-(S-1)*gap)/S),ch=Math.min(46,cw*1.5);
+  const H=P*(ch+gap)+34, x0=(W-(S*cw+(S-1)*gap))/2;
   let s='';
   for(let p=0;p<P;p++)for(let i=0;i<S;i++){
     const x=x0+i*(cw+gap),y=8+p*(ch+gap);
     s+=`<rect x="${x}" y="${y}" width="${cw}" height="${ch}" rx="3" fill="var(--cell2)" stroke="var(--cell)" stroke-width="1"/>`;
     if(cw>18)s+=`<rect x="${x+cw*0.3}" y="${y-2}" width="${cw*0.4}" height="3" rx="1" fill="var(--cell)"/>`;
   }
-  s+=`<text x="${W/2}" y="${H-8}" text-anchor="middle" font-size="12" fill="var(--muted)">${S} послідовно (→ ${fmt(S*cv,1)} В) × ${P} паралельно (→ ${fmt(P*ah,1)} А·год) · одна ${unit} = ${cv} В ${ah} А·год</text>`;
+  s+=`<text x="${W/2}" y="${H-8}" text-anchor="middle" font-size="12" fill="var(--muted)">${S} послідовно (→ ${fmt(S*cv,1)} В) × ${P} паралельно (→ ${fmt(P*ah,1)} А·год) · ${unit}: ${cv} В ${ah} А·год</text>`;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.innerHTML=s;
 }
 
-function summary(){
-  const l=last;
-  return [
-  'РОЗРАХУНОК ДБЖ',
-  `Відключення: ${l.T} год. Енергія: ${fmt(l.Eac)} Вт·год на розетках, ${fmt(l.Edc)} Вт·год з АКБ.`,
-  `Потужність: тривала ${fmt(l.Pc)} Вт, пускова ${fmt(l.Ps)} Вт.`,
-  `Інвертор: ${fmt(l.invW)} Вт, ${l.V} В, чиста синусоїда.`,
-  `Акумулятор: ${l.S}S${l.P}P = ${l.N} шт. × ${l.C.name(l.cAh)}; ${fmt(l.Vn,1)} В, ${fmt(l.Ah,1)} А·год, ${fmt(l.Wh/1000,2)} кВт·год (корисно ${fmt(l.usable)} Вт·год).`,
-  `Автономність: ${h(l.aut)}.`,
-  l.C.bms?`BMS: ${l.S}S ≥ ${l.Ibms} А.`:'',
-  `Запобіжник: ${l.fuse} А. Кабель: ${l.cabPar>1?l.cabPar+'×':''}${l.cab[0]} мм².`,
-  `Заряд: ${fmt(l.chgA)} А, дозаряд ≈ ${h(l.tChg)}.`,
-  '',
-  'СПИСОК ПОКУПОК:',
-  ...l.shop.map(([a,b,c])=>`- ${a} — ${b} — ${fmt(c)} грн`),
-  `РАЗОМ: ${fmt(l.total)} грн`,
-  '',
-  'ЗАУВАЖЕННЯ:',
-  ...l.W.filter(w=>w[0]!=='ok').map(w=>'- '+w[1])
-  ].filter(x=>x!=='').join('\n').replace(/\n(СПИСОК|ЗАУВАЖЕННЯ)/g,'\n\n$1');
-}
-function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
-const APP=window.AndroidApp||null;
-if(APP){$('share').style.display='';$('share').onclick=()=>APP.share(summary());}
-$('mbar').onclick=()=>document.querySelector('.res').scrollIntoView({behavior:'smooth'});
-$('copy').onclick=async()=>{
-  const t=summary();
+/* ---------- кнопки, збереження ---------- */
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
+async function copyText(t){
   if(APP){APP.copy(t);return}
   try{await navigator.clipboard.writeText(t);toast('Скопійовано')}
   catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Скопійовано')}catch(_){toast('Не вдалося скопіювати')}ta.remove()}
-};
+}
+$('copyDoc').onclick=()=>copyText(docText());
+if(APP){
+  $('shareDoc').style.display='';$('shareDoc').onclick=()=>APP.share(docText());
+  if(APP.print){$('pdfDoc').style.display='';$('pdfDoc').onclick=()=>APP.print(`${TITLES[docType]} ${$('docNo').value||''}`.trim())}
+}
+$('mbar').onclick=()=>$('bomCard').scrollIntoView({behavior:'smooth'});
 
-const KEY='ups-calc-v1';
-function save(){try{const o={rows};FIELDS.forEach(f=>o[f]=$(f).value);localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
-function load(){try{const o=JSON.parse(localStorage.getItem(KEY));if(!o)return false;FIELDS.forEach(f=>{if(o[f]!=null)$(f).value=o[f]});if(Array.isArray(o.rows))rows=o.rows;return true}catch(e){return false}}
+const KEY='ups-calc-v2';
+function save(){try{const o={rows,bom,custom,docType};FIELDS.forEach(f=>o[f]=$(f).value);localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+function load(){try{const o=JSON.parse(localStorage.getItem(KEY));if(!o)return false;FIELDS.forEach(f=>{if(o[f]!=null)$(f).value=o[f]});if(Array.isArray(o.rows))rows=o.rows;if(o.bom)bom=o.bom;if(Array.isArray(o.custom))custom=o.custom;if(o.docType)docType=o.docType;return true}catch(e){return false}}
 
-FIELDS.forEach(f=>{$(f).addEventListener('input',()=>{if(f==='outH')renderRows();calc()});});
-$('chem').addEventListener('change',e=>{applyChem(e.target.value);calc()});
-$('reset').onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}location.reload()};
+const DOCF=['docNo','docDate','seller','client','docNote'];
+FIELDS.forEach(f=>{$(f).addEventListener('input',()=>{
+  if(f==='outH')renderRows();
+  if(DOCF.includes(f)||f==='markup')updateTotals(); else calc();
+});});
+$('chem').addEventListener('change',e=>{applyChem(e.target.value);if(bom.cell){bom.cell.price='';bom.cell.name=null}calc()});
+$('reset').onclick=()=>{const keep={seller:$('seller').value};try{localStorage.removeItem(KEY);localStorage.setItem(KEY+'-seller',keep.seller)}catch(e){}location.reload()};
 
-if(!load()){applyChem('lfp')}
-renderRows();calc();
+const today=new Date(), ymd=today.toISOString().slice(0,10);
+if(!load()){
+  applyChem('lfp');
+  try{const s=localStorage.getItem(KEY+'-seller');if(s)$('seller').value=s}catch(e){}
+}
+if(!$('docDate').value)$('docDate').value=ymd;
+if(!$('docNo').value)$('docNo').value=ymd.slice(2).replace(/-/g,'').replace(/^(\d\d)(\d\d)(\d\d)$/,'$3$2$1')+'-1';
+renderRows();
+document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===docType));
+calc();
 </script>
 </body>
 </html>
